@@ -7,11 +7,13 @@
 
 int lcdColumns = 16;
 int lcdRows = 2;
+LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
+LiquidCrystal_I2C lcd2(0x30, lcdColumns, lcdRows);
 
 // set LCD address, number of columns and rows
 // if you don't know your display address, run an I2C scanner sketch
-LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
-LiquidCrystal_I2C lcd2(0x30, lcdColumns, lcdRows);
+//LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
+//LiquidCrystal_I2C lcd2(0x30, lcdColumns, lcdRows);
 
 
 //String menuItems[] = {"ITEM 1", "ITEM 2", "ITEM 3", "ITEM 4", "ITEM 5", "ITEM 6"};
@@ -60,7 +62,7 @@ byte menuCursor[8] = {
   B00000  //
 };
 
-//Incialización encoder rotativo HW-040 
+//Incializaciï¿½n encoder rotativo HW-040 
 
 
 AiEsp32RotaryEncoder rotaryEncoder = AiEsp32RotaryEncoder(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN);
@@ -94,7 +96,7 @@ void inicializaLcd(LiquidCrystal_I2C display) {
 void escribeLcd(String mensaje1, String mensaje2, String mensaje3, String mensaje4) {
     //lcd.clear();
     lcd1.setCursor(0, 0);
-    lcd2.setCursos(0, 0);
+    lcd2.setCursor(0, 0);
     lcd1.print(mensaje1);
     for (int i = mensaje1.length(); i < lcdColumns; i++) lcd1.print(" ");
     lcd2.print(mensaje3);
@@ -188,7 +190,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
     //Serial.println("NumPags: "+String(numPags));
     //Serial.println("Pag: "+String(pag));
     //Serial.println("opcionMenu: "+String(opcionMenu));
-    if (pag == 0) { // Primera página
+    if (pag == 0) { // Primera pï¿½gina
         for (int i = 0; i < (maxMenuItems < menuMaxLineas ? maxMenuItems : menuMaxLineas); i++) {
             lcd1.setCursor(0, i);
             lcd2.setCursor(0, i);
@@ -224,7 +226,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
             lcd2.setCursor(0, i);
             linea = menu[maxMenuItems - menuMaxLineas + i] + " " + opDefecto[maxMenuItems - menuMaxLineas + i];
             if (opcionMenu == maxMenuItems - menuMaxLineas + i + 1) {
-                lcd.write(byte(0));
+                lcd1.write(byte(0));
 
                 if (linea.length() <= lcdColumns - 1)
                     lcd1.print(linea);
@@ -333,6 +335,6 @@ void menuPrincipal() {
     String menu[] = { "Volver", "Opcion A","Opcion B","Opcion C" };
     String opDefecto[4];
     int index = 0;
-    escribeLcd("Pantalla 1","Pantalla 2");
+    escribeLcd1("Pantalla 1","Pantalla 2");
 }
 

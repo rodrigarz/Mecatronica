@@ -23,18 +23,18 @@ rotaryEncoder.encoderChanged()*/
 int16_t leeEncoder();
 int8_t deltaEncoder();  // calcula el sentido giro encoder
 void incializaRotaryEncoder();
-// Incialización del lcd
+// Incializaciï¿½n del lcd
 
-void inicializaLcd();
+void inicializaLcd(LiquidCrystal_I2C display);
 
-void escribeLcd(String mensaje1, String mensaje2);
-void escribeLcd1(String mensaje);
+void escribeLcd(String mensaje1, String mensaje2, String mensaje3, String mensaje4);
+void escribeLcd1(String mensaje, String mensaje2);
 
 int leeEstadoRotativo();
 
 bool botonEncoderPulsado();
 
-// Función principal de menu, devuelve el numero de opccion elegida
+// Funciï¿½n principal de menu, devuelve el numero de opccion elegida
 int miMenu(String menu[], int maxMenuItems, String OpDefecto[], int nMenuOpDef);
 void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu);
 double dameValor(String cadena, double valor, double inc, double min, double max);
