@@ -24,7 +24,7 @@ LiquidCrystal_I2C lcd(DIRLCD, lcdColumns, lcdRows);
 
 // Menu control variables
 /*
-int menuPage = 0;
+int menuPage = 0;<
 int maxMenuPages = round(((sizeof(menuItems) / sizeof(String)) / 2) + .5);
 int maxMenuItems = round(sizeof(menuItems) / sizeof(String));
 int cursorPosition = 0;
