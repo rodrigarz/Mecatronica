@@ -28,6 +28,7 @@ void setup() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  if(botonEncoderPulsado()) menuPrincipal();
+  menuPrincipal();
+  delay(1000);
 
 }

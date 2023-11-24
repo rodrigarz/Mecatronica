@@ -340,6 +340,7 @@ void menuPrincipal() {
     String menu[] = { "Volver", "Opcion A","Opcion B","Opcion C" };
     String opDefecto[4];
     int index = 0;
+    miMenu(menu, 8, opDefecto, 0);
     escribeLcd1("Pantalla 1","Pantalla 2");
 }
 
