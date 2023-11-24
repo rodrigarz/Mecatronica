@@ -26,7 +26,6 @@ void setup() {
   escribeLcd("Mensaje 1", "Mensaje 2", "Mensaje 3", "Mensaje 4");
 
 }
-
 void loop() {
   // put your main code here, to run repeatedly:
   if(botonEncoderPulsado()) menuPrincipal();
