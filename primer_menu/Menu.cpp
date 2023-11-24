@@ -8,13 +8,12 @@
 int lcdColumns = 16;
 int lcdRows = 2;
 LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
-LiquidCrystal_I2C lcd2(0x30, lcdColumns, lcdRows);
+LiquidCrystal_I2C lcd2(0x3F, lcdColumns, lcdRows);
 
 // set LCD address, number of columns and rows
 // if you don't know your display address, run an I2C scanner sketch
 //LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
 //LiquidCrystal_I2C lcd2(0x30, lcdColumns, lcdRows);
-
 
 //String menuItems[] = {"ITEM 1", "ITEM 2", "ITEM 3", "ITEM 4", "ITEM 5", "ITEM 6"};
 //int readKey;
@@ -84,13 +83,19 @@ void incializaRotaryEncoder() {
     rotaryEncoder.setBoundaries(-10000, 10000, true); //minValue, maxValue, cycle values (when max go to min and vice versa)
 }
 
-void inicializaLcd(LiquidCrystal_I2C display) {
-    display.init();// initialize LCD                  
-    display.backlight(); // turn on LCD backlight 
+void inicializaLcd() {
+    lcd1.init();// initialize LCD                  
+    lcd1.backlight(); // turn on LCD backlight 
     // Creates the byte for the 3 custom characters
-    display.createChar(0, menuCursor);
-    display.createChar(1, upArrow);
-    display.createChar(2, downArrow);
+    lcd1.createChar(0, menuCursor);
+    lcd1.createChar(1, upArrow);
+    lcd1.createChar(2, downArrow);
+    lcd2.init();// initialize LCD                  
+    lcd2.backlight(); // turn on LCD backlight 
+    // Creates the byte for the 3 custom characters
+    lcd2.createChar(0, menuCursor);
+    lcd2.createChar(1, upArrow);
+    lcd2.createChar(2, downArrow);
 }
 
 void escribeLcd(String mensaje1, String mensaje2, String mensaje3, String mensaje4) {

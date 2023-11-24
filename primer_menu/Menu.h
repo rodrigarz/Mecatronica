@@ -25,7 +25,7 @@ int8_t deltaEncoder();  // calcula el sentido giro encoder
 void incializaRotaryEncoder();
 // Incializaci�n del lcd
 
-void inicializaLcd(LiquidCrystal_I2C display);
+void inicializaLcd();
 
 void escribeLcd(String mensaje1, String mensaje2, String mensaje3, String mensaje4);
 void escribeLcd1(String mensaje, String mensaje2);

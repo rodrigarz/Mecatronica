@@ -11,13 +11,13 @@ ESP32Encoder encoder;
 unsigned long lecturaA;
 int direccion = 5;
 
-LiquidCrystal_I2C disp1(0x27, 16, 2);
-LiquidCrystal_I2C disp2(0x30, 16, 2);
+//LiquidCrystal_I2C disp1(0x27, 16, 2);
+//LiquidCrystal_I2C disp2(0x3F, 16, 2);
 
 void setup() {
   // put your setup code here, to run once:
-  inicializaLcd(disp1);
-  inicializaLcd(disp2);
+  inicializaLcd();
+  //inicializaLcd(disp2);
   ESP32Encoder::useInternalWeakPullResistors=UP;
   encoder.attachHalfQuad(23, 19);
   encoder.setCount(0);
