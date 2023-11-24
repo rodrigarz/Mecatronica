@@ -145,9 +145,12 @@ int miMenu(String menu[], int maxMenuItems, String opDefecto[], int nMenuOpDef) 
 
     valEncoderAnt = rotaryEncoder.readEncoder();
     muestraMenu(menu, maxMenuItems, opDefecto, opcionMenu);
+    Serial.println("Aqui 1");
     while (rotaryEncoder.currentButtonState() != BUT_RELEASED) {
-        valEncoder = rotaryEncoder.readEncoder();
+      Serial.println(valEncoder);
+        valEncoder = leeEncoder();
         if (valEncoder > valEncoderAnt) {
+            
             opcionMenu++;
             opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
             muestraMenu(menu, maxMenuItems, opDefecto, opcionMenu);
@@ -192,9 +195,9 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
     lcd1.clear();
     lcd2.setCursor(0, 0);
     lcd2.clear();
-    //Serial.println("NumPags: "+String(numPags));
-    //Serial.println("Pag: "+String(pag));
-    //Serial.println("opcionMenu: "+String(opcionMenu));
+    Serial.println("NumPags: "+String(numPags));
+    Serial.println("Pag: "+String(pag));
+    Serial.println("opcionMenu: "+String(opcionMenu));
     if (pag == 0) { // Primera p�gina
         for (int i = 0; i < (maxMenuItems < menuMaxLineas ? maxMenuItems : menuMaxLineas); i++) {
             lcd1.setCursor(0, i);
@@ -202,6 +205,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
             linea = menu[i] + " " + opDefecto[i];
             if (opcionMenu == i + 1) {
                 lcd1.write(byte(0));
+                lcd2.write(byte(1));
 
                 if (linea.length() <= lcdColumns - 1)
                     lcd1.print(linea);
@@ -221,8 +225,8 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
             }
 
 
-            //display.print(menu[i]+" "+opDefecto[i]);
-            //display.startscrollleft(0x00, 0x0F);
+           // display.print(menu[i]+" "+opDefecto[i]);
+           // display.startscrollleft(0x00, 0x0F);
         }
     }
     else if (pag + 1 == numPags) { // Ultima Pagina
@@ -251,7 +255,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
             }
 
 
-            //display.print(menu[maxMenuItems-menuMaxLineas+i]+" "+opDefecto[maxMenuItems-menuMaxLineas+i]);
+           // display.print(menu[maxMenuItems-menuMaxLineas+i]+" "+opDefecto[maxMenuItems-menuMaxLineas+i]);
             //display.startscrollleft(0x00, 0x0F);
         }
     }

@@ -17,6 +17,7 @@ int lcdRows = 2;
 // set LCD address, number of columns and rows
 // if you don't know your display address, run an I2C scanner sketch
 LiquidCrystal_I2C lcd(DIRLCD, lcdColumns, lcdRows); 
+LiquidCrystal_I2C lcd2(DIRLCD2, lcdColumns, lcdRows);
 
 
 //String menuItems[] = {"ITEM 1", "ITEM 2", "ITEM 3", "ITEM 4", "ITEM 5", "ITEM 6"};
@@ -24,7 +25,7 @@ LiquidCrystal_I2C lcd(DIRLCD, lcdColumns, lcdRows);
 
 // Menu control variables
 /*
-int menuPage = 0;<
+int menuPage = 0;
 int maxMenuPages = round(((sizeof(menuItems) / sizeof(String)) / 2) + .5);
 int maxMenuItems = round(sizeof(menuItems) / sizeof(String));
 int cursorPosition = 0;
@@ -94,6 +95,12 @@ void inicializaLcd(){
   lcd.createChar(0, menuCursor);
   lcd.createChar(1, upArrow);
   lcd.createChar(2, downArrow);
+  lcd2.init();// initialize LCD                  
+  lcd2.backlight(); // turn on LCD backlight 
+    // Creates the byte for the 3 custom characters
+  lcd2.createChar(0, menuCursor);
+  lcd2.createChar(1, upArrow);
+  lcd2.createChar(2, downArrow);
 } 
 
 void escribeLcd(String mensaje1, String mensaje2){
@@ -126,35 +133,37 @@ bool botonEncoderPulsado(){
 //////////////////////////*******Menu Generico ******///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef){
+int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef, LiquidCrystal_I2C display){
   int valEncoder,valEncoderAnt;
   int opcionMenu=nMenuOpDef+1;
   static long int tiempo=millis();
   
  
   valEncoderAnt = rotaryEncoder.readEncoder();
-  muestraMenu(menu, maxMenuItems,  opDefecto, opcionMenu);
+  muestraMenu(menu, maxMenuItems,  opDefecto, opcionMenu, lcd);
   while (rotaryEncoder.currentButtonState() != BUT_RELEASED) {
     valEncoder = rotaryEncoder.readEncoder();
+    Serial.println(valEncoder);
     if(valEncoder>valEncoderAnt){     
             opcionMenu++;
             opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
-            muestraMenu(menu, maxMenuItems,   opDefecto, opcionMenu);
+            muestraMenu(menu, maxMenuItems,   opDefecto, opcionMenu, display);
             valEncoderAnt=valEncoder;
     }else if(valEncoder<valEncoderAnt){
             opcionMenu--;
             opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
-            muestraMenu(menu, maxMenuItems,   opDefecto, opcionMenu);
+            muestraMenu(menu, maxMenuItems,   opDefecto, opcionMenu, display);
             valEncoderAnt=valEncoder;
     }else{      // Entra cada cierto tiempo
             if(millis()-tiempo>400) {
                 if(menu[opcionMenu-1].length()+opDefecto[opcionMenu-1].length()>=lcdColumns-1)                 // Solo se llama a la funcion si el texto es largo
-                    muestraMenu(menu, maxMenuItems, opDefecto,opcionMenu );
+                    muestraMenu(menu, maxMenuItems, opDefecto,opcionMenu, display );
                 tiempo=millis();
             }
     }
   }
   lcd.clear();
+  lcd2.clear();
   delay(100);
   return opcionMenu-1;
 }
@@ -163,7 +172,7 @@ int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef)
 //////////////////////////*******Muestra Menu ******///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcionMenu){
+void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcionMenu, LiquidCrystal_I2C display){
   int numPags,pag;
   String linea;
   //int maxTam=14;
@@ -174,35 +183,35 @@ void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcio
   
   numPags=round((float)maxMenuItems/menuMaxLineas+0.4999);
   pag=(opcionMenu-1)/menuMaxLineas;
-  lcd.setCursor(0, 0);
-  lcd.clear();
+  display.setCursor(0, 0);
+  display.clear();
   //Serial.println("NumPags: "+String(numPags));
   //Serial.println("Pag: "+String(pag));
   //Serial.println("opcionMenu: "+String(opcionMenu));
   if(pag==0){ // Primera página
     for(int i=0; i<(maxMenuItems<menuMaxLineas?maxMenuItems:menuMaxLineas); i++){
-      lcd.setCursor(0, i);
+      display.setCursor(0, i);
       linea=menu[i]+" "+opDefecto[i];
       if(opcionMenu==i+1){
-        lcd.write(byte(0));
+        display.write(byte(0));
 
         if(linea.length()<=lcdColumns-1)
-          lcd.print(linea);
+          display.print(linea);
         else{
           if(linea.length()>lcdColumns-1-k ){
              k++;
           }
           else k=0;
-          lcd.print(linea.substring(0+k,lcdColumns-1+k));
-          if(k+lcdColumns-1>linea.length()) lcd.print(" "+linea.substring(0,k+lcdColumns-1-linea.length()-1));
+          display.print(linea.substring(0+k,lcdColumns-1+k));
+          if(k+lcdColumns-1>linea.length()) display.print(" "+linea.substring(0,k+lcdColumns-1-linea.length()-1));
         }
       }
       else{
-        lcd.print(" ");
+        display.print(" ");
         if(linea.length()<=lcdColumns-1)
-          lcd.print(linea);
+          display.print(linea);
         else
-          lcd.print(linea.substring(0,lcdColumns-1));
+          display.print(linea.substring(0,lcdColumns-1));
       }
       
       
@@ -211,26 +220,26 @@ void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcio
     }
   }else if(pag+1==numPags){ // Ultima Pagina
     for(int i=0; i<menuMaxLineas; i++){
-      lcd.setCursor(0, i);
+      display.setCursor(0, i);
       linea=menu[maxMenuItems-menuMaxLineas+i]+" "+opDefecto[maxMenuItems-menuMaxLineas+i];
       if(opcionMenu==maxMenuItems-menuMaxLineas+i+1){
-        lcd.write(byte(0));
+        display.write(byte(0));
         
         if(linea.length()<=lcdColumns-1)
-          lcd.print(linea);
+          display.print(linea);
         else{
          if(linea.length()>lcdColumns-1-k )k++;
          else k=0;
-         lcd.print(linea.substring(0+k,lcdColumns-1+k));
-         if(k+lcdColumns-1>linea.length()) lcd.print(" "+linea.substring(0,k+lcdColumns-1-linea.length()-1));
+         display.print(linea.substring(0+k,lcdColumns-1+k));
+         if(k+lcdColumns-1>linea.length()) display.print(" "+linea.substring(0,k+lcdColumns-1-linea.length()-1));
         }
       }
       else{
-        lcd.print(" ");;
+        display.print(" ");;
         if(linea.length()<=lcdColumns-1)
-          lcd.print(linea);
+          display.print(linea);
         else
-          lcd.print(linea.substring(0,lcdColumns-1));
+          display.print(linea.substring(0,lcdColumns-1));
       }
       
       
@@ -239,25 +248,25 @@ void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcio
     }
   }else{
     for(int i=0; i<menuMaxLineas; i++){
-      lcd.setCursor(0, i);
+      display.setCursor(0, i);
       linea=menu[pag*menuMaxLineas+i]+" "+opDefecto[pag*menuMaxLineas+i];
       if(opcionMenu==pag*menuMaxLineas+i+1){
-        lcd.write(byte(0));
+        display.write(byte(0));
         if(linea.length()<=lcdColumns-1)
-          lcd.print(linea);
+          display.print(linea);
         else{
          if(linea.length()>lcdColumns-1-k )k++;
          else k=0;
-         lcd.print(linea.substring(k,lcdColumns-1+k));
-         if(k+lcdColumns-1>linea.length()) lcd.print(" "+linea.substring(0,k+lcdColumns-1-linea.length()-1));
+         display.print(linea.substring(k,lcdColumns-1+k));
+         if(k+lcdColumns-1>linea.length()) display.print(" "+linea.substring(0,k+lcdColumns-1-linea.length()-1));
         }
       }
       else{
-        lcd.print(" ");
+        display.print(" ");
         if(linea.length()<=lcdColumns-1)
-          lcd.print(linea);
+          display.print(linea);
         else
-          lcd.print(linea.substring(0,lcdColumns-1));
+          display.print(linea.substring(0,lcdColumns-1));
       }
       
       
@@ -323,7 +332,7 @@ void menuPrincipal(){
         opDefecto[2]="";
         opDefecto[1]="*";
       }
-     index=miMenu(menu,4, opDefecto,index);
+     index=miMenu(menu,4, opDefecto,index, lcd);
      switch (index) {
         case 1:                     ////--Estado Parado--////
             sys.estado=PARO; 
@@ -360,7 +369,7 @@ void menuAjustes(){
      opDefecto[1]=(sys.control==VELOCIDAD?"Velocidad":"Posicion");
      //opDefecto[2]=(sys.entrada==ESCALON?"Escalon":"Seno");
      opDefecto[2]=stringEntrada[sys.entrada];
-     index=miMenu(menu,4,opDefecto, index);
+     index=miMenu(menu,4,opDefecto, index, lcd2);
      switch (index) {
         case 1:                     ////--Control Posicion o Velocidad--////
             sys.control=(sys.control==VELOCIDAD?POSICION:VELOCIDAD);
@@ -391,7 +400,7 @@ void menuParametros(){
      opDefecto[2]=String(sys.periodo);
      
      
-     index=miMenu(menu,7,opDefecto, index);
+     index=miMenu(menu,7,opDefecto, index, lcd);
      switch (index) {
         case 1:                     ////--SetPoint--////
             sys.setPoint=dameValor(menu[index], sys.setPoint,10, -10000, 10000);
@@ -439,7 +448,7 @@ void menuKVel(){
      opDefecto[5]=String(sys.kDVel);
      opDefecto[6]=String(sys.kIVel);
      
-     index=miMenu(menu,7,opDefecto, index);
+     index=miMenu(menu,7,opDefecto, index, lcd2);
      switch (index) {
         case 1:                     ////--Kp Zona muerta--////
             sys.kPZMVel=dameValor(menu[index], sys.kPZMVel,0.01, 0, 1000);
@@ -482,7 +491,7 @@ void menuKPos(){
      opDefecto[5]=String(sys.kDPos);
      opDefecto[6]=String(sys.kIPos);
      
-     index=miMenu(menu,7,opDefecto, index);
+     index=miMenu(menu,7,opDefecto, index, lcd2);
      switch (index) {
         case 1:                     ////--Kp Zona muerta--////
             sys.kPZMPos=dameValor(menu[index], sys.kPZMPos,0.01, 0, 1000);
