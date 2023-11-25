@@ -41,7 +41,7 @@ bool botonEncoderPulsado();
 // Función principal de menu, devuelve el numero de opccion elegida
 int miMenu(String menu[],int maxMenuItems,   String OpDefecto[], int nMenuOpDef, LiquidCrystal_I2C display);
 void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcionMenu, LiquidCrystal_I2C display);
-double dameValor(String cadena, double valor, double inc, double min, double max);
+double dameValor(String cadena, double valor, double inc, double min, double max, LiquidCrystal_I2C display);
 
 void menuPrincipal();
 void menuAjustes();

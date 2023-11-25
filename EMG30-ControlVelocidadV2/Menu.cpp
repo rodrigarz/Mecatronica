@@ -177,7 +177,7 @@ void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcio
   String linea;
   //int maxTam=14;
   static int k=0;
-  int menuMaxLineas=2;
+  int menuMaxLineas=4;
   
   
   
@@ -281,13 +281,13 @@ void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcio
 //////////////////////////*******dameValor ******///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-double dameValor(String cadena, double valor, double inc, double min, double max){
+double dameValor(String cadena, double valor, double inc, double min, double max, LiquidCrystal_I2C display){
   int valEncoder,valEncoderAnt;
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(cadena+String(":"));
-  lcd.setCursor(0, 1);  
-  lcd.print(valor);
+  display.clear();
+  display.setCursor(0, 0);
+  display.print(cadena+String(":"));
+  display.setCursor(0, 1);  
+  display.print(valor);
   valEncoderAnt = rotaryEncoder.readEncoder();
   while (rotaryEncoder.currentButtonState() != BUT_RELEASED) {
     valEncoder = rotaryEncoder.readEncoder();
@@ -295,21 +295,21 @@ double dameValor(String cadena, double valor, double inc, double min, double max
             valor=valor+inc;
             valor = constrain(valor, min, max);
             valEncoderAnt=valEncoder;
-            lcd.setCursor(0, 0);  
-            lcd.clear();  
-            lcd.print(cadena+String(":"));
-            lcd.setCursor(0, 1);  
-            lcd.print(valor);
+            display.setCursor(0, 0);  
+            display.clear();  
+            display.print(cadena+String(":"));
+            display.setCursor(0, 1);  
+            display.print(valor);
             Serial.println("Valor: "+String(valor));
     }else if(valEncoder<valEncoderAnt){
             valor=valor-inc;
             valor = constrain(valor, min, max);
             valEncoderAnt=valEncoder;
-            lcd.setCursor(0, 0);    
-            lcd.clear();
-            lcd.print(cadena+String(":"));
-            lcd.setCursor(0, 1);
-            lcd.print(valor);
+            display.setCursor(0, 0);    
+            display.clear();
+            display.print(cadena+String(":"));
+            display.setCursor(0, 1);
+            display.print(valor);
             Serial.println("Valor: "+String(valor));
     }
   }
@@ -320,8 +320,8 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 
 
 void menuPrincipal(){
-  String menu[]={"Volver", "Paro","Marcha","Ajustes"};
-  String opDefecto[4];
+  String menu[]={"Volver", "Manual","Automatico","Puerto serial","Ajustes"};
+  String opDefecto[2];
   int index=0;
  
   do{ 
@@ -332,7 +332,7 @@ void menuPrincipal(){
         opDefecto[2]="";
         opDefecto[1]="*";
       }
-     index=miMenu(menu,4, opDefecto,index, lcd);
+     index=miMenu(menu,5, opDefecto,index, lcd);
      switch (index) {
         case 1:                     ////--Estado Parado--////
             sys.estado=PARO; 
@@ -403,10 +403,10 @@ void menuParametros(){
      index=miMenu(menu,7,opDefecto, index, lcd);
      switch (index) {
         case 1:                     ////--SetPoint--////
-            sys.setPoint=dameValor(menu[index], sys.setPoint,10, -10000, 10000);
+            sys.setPoint=dameValor(menu[index], sys.setPoint,10, -10000, 10000, lcd2);
             break;
         case 2:                     ////--Kp Zona muerta--////
-            sys.periodo=dameValor(menu[index], sys.periodo,0.05, 0, 1000);
+            sys.periodo=dameValor(menu[index], sys.periodo,0.05, 0, 1000, lcd2);
             
             break;
         case 3:                     ////--Parametros Velocidad--////
@@ -448,29 +448,29 @@ void menuKVel(){
      opDefecto[5]=String(sys.kDVel);
      opDefecto[6]=String(sys.kIVel);
      
-     index=miMenu(menu,7,opDefecto, index, lcd2);
+     index=miMenu(menu,7,opDefecto, index, lcd);
      switch (index) {
         case 1:                     ////--Kp Zona muerta--////
-            sys.kPZMVel=dameValor(menu[index], sys.kPZMVel,0.01, 0, 1000);
+            sys.kPZMVel=dameValor(menu[index], sys.kPZMVel,0.01, 0, 1000, lcd2);
             
             break;
         case 2:                     ////--Kd Zona Muerta--////
-            sys.kDZMVel=dameValor(menu[index], sys.kDZMVel,0.01, 0, 1000);
+            sys.kDZMVel=dameValor(menu[index], sys.kDZMVel,0.01, 0, 1000, lcd2);
             
             break;
         case 3:                     ////--Ki Zona Muerta--////
-            sys.kIZMVel=dameValor(menu[index], sys.kIZMVel,0.01, 0, 1000);
+            sys.kIZMVel=dameValor(menu[index], sys.kIZMVel,0.01, 0, 1000, lcd2);
             break;
         case 4:                     ////--Kp--////
-            sys.kPVel=dameValor(menu[index], sys.kPVel,0.01, 0, 1000);
+            sys.kPVel=dameValor(menu[index], sys.kPVel,0.01, 0, 1000, lcd2);
             
             break;
         case 5:                     ////--Kd--////
-            sys.kDVel=dameValor(menu[index], sys.kDVel,0.01, 0, 1000);
+            sys.kDVel=dameValor(menu[index], sys.kDVel,0.01, 0, 1000, lcd2);
             
             break;
         case 6:                     ////--Ki--////
-            sys.kIVel=dameValor(menu[index], sys.kIVel,0.01, 0, 1000);
+            sys.kIVel=dameValor(menu[index], sys.kIVel,0.01, 0, 1000, lcd2);
             break;
              }
   }while(index!=0);
@@ -491,29 +491,29 @@ void menuKPos(){
      opDefecto[5]=String(sys.kDPos);
      opDefecto[6]=String(sys.kIPos);
      
-     index=miMenu(menu,7,opDefecto, index, lcd2);
+     index=miMenu(menu,7,opDefecto, index, lcd);
      switch (index) {
         case 1:                     ////--Kp Zona muerta--////
-            sys.kPZMPos=dameValor(menu[index], sys.kPZMPos,0.01, 0, 1000);
+            sys.kPZMPos=dameValor(menu[index], sys.kPZMPos,0.01, 0, 1000, lcd2);
             
             break;
         case 2:                     ////--Kd Zona Muerta--////
-            sys.kDZMPos=dameValor(menu[index], sys.kDZMPos,0.01, 0, 1000);
+            sys.kDZMPos=dameValor(menu[index], sys.kDZMPos,0.01, 0, 1000, lcd2);
             
             break;
         case 3:                     ////--Ki Zona Muerta--////
-            sys.kIZMPos=dameValor(menu[index], sys.kIZMPos,0.01, 0, 1000);
+            sys.kIZMPos=dameValor(menu[index], sys.kIZMPos,0.01, 0, 1000, lcd2);
             break;
         case 4:                     ////--Kp--////
-            sys.kPPos=dameValor(menu[index], sys.kPPos,0.01, 0, 1000);
+            sys.kPPos=dameValor(menu[index], sys.kPPos,0.01, 0, 1000, lcd2);
             
             break;
         case 5:                     ////--Kd--////
-            sys.kDPos=dameValor(menu[index], sys.kDPos,0.01, 0, 1000);
+            sys.kDPos=dameValor(menu[index], sys.kDPos,0.01, 0, 1000, lcd2);
             
             break;
         case 6:                     ////--Ki--////
-            sys.kIPos=dameValor(menu[index], sys.kIPos,0.01, 0, 1000);
+            sys.kIPos=dameValor(menu[index], sys.kIPos,0.01, 0, 1000, lcd2);
             break;
              }
   }while(index!=0);
