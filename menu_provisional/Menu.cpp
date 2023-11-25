@@ -164,21 +164,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 			linea = menu[i] + " " + opDefecto[i];
 			if (opcionMenu == i + 1)
 			{
-				display.write(byte(0));
-
-				if (linea.length() <= lcdColumns - 1)
-					display.print(linea);
-				else
-				{
-					//Para el desplazamiento horizontal de las lineas que no esntran en pantalla
-					if (linea.length() > lcdColumns - 1 - k)
-						k++;
-					else
-						k = 0;
-					display.print(linea.substring(0 + k, lcdColumns - 1 + k));
-					if (k + lcdColumns - 1 > linea.length())
-						display.print(" " + linea.substring(0, k + lcdColumns - 1 - linea.length() - 1));
-				}
+				menuDesplazamiento(linea);
 			}
 			else
 			{
@@ -199,19 +185,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 			linea = menu[maxMenuItems - menuMaxLineas + 1] + " " + opDefecto[maxMenuItems - menuMaxLienas + i];
 			if (opcionMenu == maxMenuItems - menuMaxLineas + i + 1)
 			{
-				display.write(byte(0));
-				if (linea.length() <= lcdColumns - 1)
-					display.print(linea);
-				else
-				{
-					if (linea.length() > lcdColumns - 1 - k)
-						k++;
-					else
-						k = 0;
-					display.print(linea.substring(k, lcdColumns - 1 + k));
-					if (k + lcdColumns - 1 > linea.length())
-						display.print(" " + linea.substring(0, k + lcdColumns - 1 - linea.length() - 1));
-				}
+				menuDesplazamiento(linea);
 			}
 			else
 			{
@@ -231,19 +205,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 			linea = menu[pag * menumaxLineas + i] + " " + opDefecto[pag * menuMaxLineas + i];
 			if (opcionMenu == pag * menuMaxLineas + i + )
 			{
-				display.write(byte(0));
-				if (linea.length() <= lcdColumns - 1)
-					display.print(linea);
-				else
-				{
-					if (linea.length() > lcdColumns - 1 - k)
-						k++;
-					else
-						k = 0;
-					display.print(linea.substring(k, lcdColumns - 1 + k));
-					if (k + lcdColumns - 1 > linea.length())
-						display.print(" " + linea.substring(0, k + lcdColumns - 1 - linea.length() - 1));
-				}
+				menuDesplazamiento(linea);
 			}
 			else
 			{
@@ -256,3 +218,22 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 		}
 	}
 }
+
+void menuDesplazamiento(String linea)
+{
+	display.write(byte(0));
+	if (linea.length() <= lcdColumns - 1)
+		display.print(linea);
+	else
+	{
+		if (linea.length() > lcdColumns - 1 - k)
+			k++;
+		else
+			k = 0;
+		display.print(linea.substring(k, lcdColumns - 1 + k));
+		if (k + lcdColumns - 1 > linea.length())
+			display.print(" " + linea.substring(0, k + lcdColumns - 1 - linea.length() - 1));
+	}
+}
+
+//Por dame valor
