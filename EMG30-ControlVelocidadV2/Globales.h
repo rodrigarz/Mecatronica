@@ -4,8 +4,9 @@
 #include "Librerias.h"
 
 
-#define MARCHA 0
-#define PARO 1
+#define Manual 0
+#define Automatico 1
+#define PuertoSerial 2
 #define VELOCIDAD 0
 #define POSICION 1
 #define ESCALON 0

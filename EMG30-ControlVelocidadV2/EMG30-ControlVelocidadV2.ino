@@ -40,7 +40,7 @@ Movimiento de motor Pines definidos en Movement.cpp
 
 system_t sys;   // Estructura definida en Globales.h que contiene los variables del programa que se graba en la Eeprom 
 
-String stringEstado[]={"MARCHA","PARO"};
+String stringEstado[]={"Manual","Automatico", "PuertoSerial"};
 String stringControl[]={"VEL","POS"};
 String stringEntrada[]={"ESCALON","SENO","REFERENCIA","RAMPA"};
 
@@ -106,7 +106,7 @@ void setup() {
   //buscaFC();
 
   myPID.SetOutputLimits(-255, 255);
-  if(sys.estado==PARO) myPID.SetMode(MANUAL);
+  if(sys.estado==Manual) myPID.SetMode(MANUAL);
   else myPID.SetMode(AUTOMATIC);
   
   //t_ant=millis();
@@ -135,11 +135,11 @@ void loop() {
   //Serial.println("Estado: "+String(sys.estado));
   //Serial.println("Control: "+String(sys.control));
 
-  if(sys.estado==MARCHA){
+  if(sys.estado==Manual){
     if(sys.control==VELOCIDAD)  controlVelocidad();
     else if (sys.control==POSICION) controlPosicion();
   }
-  else if(sys.estado==PARO){
+  else if(sys.estado==Manual){
     myPID.SetMode(MANUAL);
     Motor(0);
     //Serial.println("Estado: "+String(sys.estado));

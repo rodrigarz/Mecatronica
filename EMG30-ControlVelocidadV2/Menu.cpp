@@ -177,7 +177,7 @@ void muestraMenu(String menu[], int maxMenuItems,  String opDefecto[], int opcio
   String linea;
   //int maxTam=14;
   static int k=0;
-  int menuMaxLineas=4;
+  int menuMaxLineas=2;
   
   
   
@@ -325,30 +325,39 @@ void menuPrincipal(){
   int index=0;
  
   do{ 
-      if(sys.estado==MARCHA) {
+      if(sys.estado==Manual) {
         opDefecto[1]="";
         opDefecto[2]="*";
-      }else{
+        opDefecto[3]="";
+      }else if(sys.estado==Automatico){
         opDefecto[2]="";
         opDefecto[1]="*";
+        opDefecto[3]="";
+      }else{
+        opDefecto[1]="";
+        opDefecto[2]="";
+        opDefecto[3]="*";
       }
      index=miMenu(menu,5, opDefecto,index, lcd);
      switch (index) {
         case 1:                     ////--Estado Parado--////
-            sys.estado=PARO; 
+            sys.estado=Automatico; 
             break;
         case 2:                     ////--Estado Marcha--////
-            sys.estado=MARCHA;
+            sys.estado=Manual;
             break;
-        case 3:                     ////--Ajuste Parametros--////
+        case 3:
+            sys.estado=PuertoSerial;
+            break;
+        case 4:                     ////--Ajuste Parametros--////
             menuAjustes(); 
             break;
 
      }
      //Serial.println("index: "+String(index));
-  }while(index==3);
-  if(sys.estado==PARO){
-    myPID.SetMode(MANUAL);
+  }while(index==4);
+  if(sys.estado==Automatico){
+    myPID.SetMode(Manual);
     //myEnc.write(0);
     myEnc.reset(); 
   }

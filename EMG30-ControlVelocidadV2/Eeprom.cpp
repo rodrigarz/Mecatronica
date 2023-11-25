@@ -28,7 +28,7 @@ void settingsSaveToEEprom(){
 }
 
 void settingsReset() {
-    sys.estado=PARO;
+    sys.estado=Automatico;
     sys.control=VELOCIDAD;
     sys.entrada=ESCALON;
     sys.setPoint=500;
