@@ -74,7 +74,7 @@ void inicializacion()
   lcd2.backlight();
 }
 
-void inicializaLcd(LiquidCrystal_I2C display)
+void inicializaLcd(LiquidCrystal_I2C &display)
 {
 	display.init();
 	display.backlight();
@@ -93,7 +93,7 @@ void escribeLcd(String mensaje1, String mensaje2)
 	for (int i = mensaje2.length(); i < lcdColumns; i++) lcd1.print(" ");
 }
 
-void escribeLcd1(String mensaje, LiquidCrystal_I2C display)
+void escribeLcd1(String mensaje, LiquidCrystal_I2C &display)
 {
 	display.setCursor(0, 0);
 	display.print(mensaje);
@@ -141,7 +141,7 @@ int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef,
   return opcionMenu-1;
 }
 
-void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C display)
+void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C &display)
 {
  int numPags, pag;
   String linea;
