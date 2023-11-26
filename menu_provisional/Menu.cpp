@@ -160,24 +160,14 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 
       if (opcionMenu == currentIndex + 1) {
         display.write(byte(0));
-        if (linea.length() <= lcdColumns - 1) {
-          display.print(linea);
-          for (int j = linea.length(); j < lcdColumns - 1; j++) {
-            display.print(" ");
-          }
-        } else {
-          display.print(linea.substring(0, lcdColumns - 1));
-        }
       } else {
         display.print(" ");
-        if (linea.length() <= lcdColumns) {
-          display.print(linea);
-          for (int j = linea.length(); j < lcdColumns; j++) {
-            display.print(" ");
-          }
-        } else {
-          display.print(linea.substring(0, lcdColumns));
-        }
+      }
+
+      if (linea.length() <= lcdColumns) {
+        display.print(linea);
+      } else {
+        display.print(linea.substring(0, lcdColumns));
       }
     }
   }
