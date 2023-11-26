@@ -15,6 +15,7 @@ void setup() {
   inicializaRotaryEncoder();         //Incialización encoder rotativo HW-040 
 
   ESP32Encoder::useInternalWeakPullResistors=UP;
+  escribeLcd(stringEstado[sys.estado], stringControl[sys.control]);
 }
 
 void loop() {

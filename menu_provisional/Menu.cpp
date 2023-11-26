@@ -4,6 +4,7 @@
 #include "Menu.h"
 #include "Globales.h"
 #include <LiquidCrystal_I2C.h>
+#include "Eeprom.h"
 
 int lcdColumns = 16;
 int lcdRows = 2;
@@ -82,14 +83,14 @@ void inicializaLcd(LiquidCrystal_I2C display)
 	display.createChar(2, downArrow);
 }
 
-void escribeLcd(String mensaje1, String mensaje2, LiquidCrystal_I2C display)
+void escribeLcd(String mensaje1, String mensaje2)
 {
-	display.setCursor(0, 0);
-	display.print(mensaje1);
-	for (int i = mensaje1.length(); i < lcdColumns; i++) display.print(" ");
-	display.setCursor(0, 1);
-	display.print(mensaje2);
-	for (int i = mensaje2.length(); i < lcdColumns; i++) display.print(" ");
+	lcd1.setCursor(0, 0);
+	lcd1.print(mensaje1);
+	for (int i = mensaje1.length(); i < lcdColumns; i++) lcd1.print(" ");
+	lcd1.setCursor(0, 1);
+	lcd1.print(mensaje2);
+	for (int i = mensaje2.length(); i < lcdColumns; i++) lcd1.print(" ");
 }
 
 void escribeLcd1(String mensaje, LiquidCrystal_I2C display)
@@ -107,140 +108,82 @@ bool botonEncoderPulsado()
 		return true;
 }
 
-int miMenu(String menu[], int maxMenuItems, String opDefecto[], int nMenuOpDef, LiquidCrystal_I2C display)
-{
-	int valEncoder, valEncoderAnt;
-	int opcionMenu = nMenuOpDef + 1;
-	static long int tiempo = millis();
-
-	valEncoderAnt = leeEncoder();
-	muestraMenu(menu, maxMenuItems, opDefecto, opcionMenu, display);
-
-	while (rotaryEncoder.currentButtonState() != BUT_RELEASED)
-	{
-		valEncoder = leeEncoder();
-		if (valEncoder > valEncoderAnt)
-		{
-			opcionMenu++;
-			opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
-			muestraMenu(menu, maxMenuItems, opDefecto, opcionMenu, display);
-			valEncoderAnt = valEncoder;
-		}
-		else if (valEncoder < valEncoderAnt)
-		{
-			opcionMenu--;
-			opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
-			muestraMenu(menu, maxMenuItems, opDefecto, opcionMenu, display);
-			valEncoderAnt = valEncoder;
-		}
-		else
-		{
-			if (millis() - tiempo > 400)
-			{
-				if (menu[opcionMenu - 1].length() + opDefecto[opcionMenu - 1].length() >= lcdColumns - 1)
-					muestraMenu(menu, maxMenuItems, opDefecto, opcionMenu, display);
-				tiempo = millis();
-			}
-		}
-	}
-	do
-	{
-
-	} while (millis() - tiempo < 100);
-	return opcionMenu - 1;
+int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef, LiquidCrystal_I2C display){
+  int valEncoder,valEncoderAnt;
+  int opcionMenu=nMenuOpDef+1;
+  static long int tiempo=millis();
+  
+ 
+  valEncoderAnt = rotaryEncoder.readEncoder();
+  muestraMenu(menu, maxMenuItems,  opDefecto, opcionMenu, display);
+  while (rotaryEncoder.currentButtonState() != BUT_RELEASED) {
+    valEncoder = rotaryEncoder.readEncoder();
+    Serial.println(valEncoder);
+    if(valEncoder>valEncoderAnt){     
+            opcionMenu++;
+            opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
+            muestraMenu(menu, maxMenuItems,   opDefecto, opcionMenu, display);
+            valEncoderAnt=valEncoder;
+    }else if(valEncoder<valEncoderAnt){
+            opcionMenu--;
+            opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
+            muestraMenu(menu, maxMenuItems,   opDefecto, opcionMenu, display);
+            valEncoderAnt=valEncoder;
+    }else{      // Entra cada cierto tiempo
+            if(millis()-tiempo>400) {
+                if(menu[opcionMenu-1].length()+opDefecto[opcionMenu-1].length()>=lcdColumns-1)                 // Solo se llama a la funcion si el texto es largo
+                    muestraMenu(menu, maxMenuItems, opDefecto,opcionMenu, display );
+                tiempo=millis();
+            }
+    }
+  }
+  delay(100);
+  return opcionMenu-1;
 }
 
 void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C display)
 {
-	int numPags, pag;
-	String linea;
-	static int k = 0;
-	int menuMaxLineas = 2;
+  int numPags, pag;
+  String linea;
+  int menuMaxLineas = 2;
 
-	numPags = round((float)maxMenuItems / menuMaxLineas + .5);
-	pag = (opcionMenu - 1) / menuMaxLineas;
+  numPags = round((float)maxMenuItems / menuMaxLineas + 0.4999);
+  pag = (opcionMenu - 1) / menuMaxLineas;
 
-	display.setCursor(0, 0);
-	display.clear();
-	if (pag == 0)
-	{
-		for (int i = 0; i < (maxMenuItems < menuMaxLineas ? maxMenuItems : menuMaxLineas); i++) // Mientras que i sea menor que el menor de maxMenuItems y menuMaxLineas
-		{
-			display.setCursor(0, i);
-			linea = menu[i] + " " + opDefecto[i];
-			if (opcionMenu == i + 1)
-			{
-				menuDesplazamiento(linea, display, k);
-			}
-			else
-			{
-				display.print(" ");
-				if (linea.length() <= lcdColumns - 1)
-					display.print(linea);
-				else
-					display.print(linea.substring(0, lcdColumns - 1));
-			}
+  display.clear();
 
-		}
-	}
-	else if (pag + 1 == numPags)
-	{
-		for (int i = 0; i < menuMaxLineas; i++)
-		{
-			display.setCursor(0, i);
-			linea = menu[maxMenuItems - menuMaxLineas + 1] + " " + opDefecto[maxMenuItems - menuMaxLineas + i];
-			if (opcionMenu == maxMenuItems - menuMaxLineas + i + 1)
-			{
-				menuDesplazamiento(linea, display, k);
-			}
-			else
-			{
-				display.print(" ");
-				if (linea.length() <= lcdColumns - 1)
-					display.print(linea);
-				else
-					display.print(linea.substring(0, lcdColumns - 1));
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < menuMaxLineas; i++)
-		{
-			display.setCursor(0, i);
-			linea = menu[pag * menuMaxLineas + i] + " " + opDefecto[pag * menuMaxLineas + i];
-			if (opcionMenu == pag * menuMaxLineas + i + k)
-			{
-				menuDesplazamiento(linea, display, k);
-			}
-			else
-			{
-				display.print(" ");
-				if (linea.length() <= lcdColumns - 1)
-					display.print(linea);
-				else
-					display.print(linea.substring(0, lcdColumns - 1));
-			}
-		}
-	}
+  for (int i = 0; i < menuMaxLineas; i++) {
+    int currentIndex = pag * menuMaxLineas + i;
+    if (currentIndex < maxMenuItems) {
+      display.setCursor(0, i);
+      linea = menu[currentIndex] + " " + opDefecto[currentIndex];
+
+      if (opcionMenu == currentIndex + 1) {
+        display.write(byte(0));
+        if (linea.length() <= lcdColumns - 1) {
+          display.print(linea);
+          for (int j = linea.length(); j < lcdColumns - 1; j++) {
+            display.print(" ");
+          }
+        } else {
+          display.print(linea.substring(0, lcdColumns - 1));
+        }
+      } else {
+        display.print(" ");
+        if (linea.length() <= lcdColumns) {
+          display.print(linea);
+          for (int j = linea.length(); j < lcdColumns; j++) {
+            display.print(" ");
+          }
+        } else {
+          display.print(linea.substring(0, lcdColumns));
+        }
+      }
+    }
+  }
 }
 
-void menuDesplazamiento(String linea, LiquidCrystal_I2C display, int k)
-{
-	display.write(byte(0));
-	if (linea.length() <= lcdColumns - 1)
-		display.print(linea);
-	else
-	{
-		if (linea.length() > lcdColumns - 1 - k)
-			k++;
-		else
-			k = 0;
-		display.print(linea.substring(k, lcdColumns - 1 + k));
-		if (k + lcdColumns - 1 > linea.length())
-			display.print(" " + linea.substring(0, k + lcdColumns - 1 - linea.length() - 1));
-	}
-}
+
 
 double dameValor(String cadena, double valor, double inc, double min, double max)
 {
@@ -272,10 +215,7 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 		lcd2.setCursor(0, 1);
 		lcd2.print(valor);
 	}
-	do
-	{
-
-	} while (millis() - tiempo < 100);
+	delay(100);
 	return valor;
 }
 
@@ -304,6 +244,7 @@ void menuPrincipal()
 		{
 		case 1:
 			sys.estado = MANUAL;
+      menuManual();
 			break;
 		case 2:
 			sys.estado = AUTOMATICO;
@@ -313,11 +254,6 @@ void menuPrincipal()
 			break;
 		}
 	} while (index == 3);
-
-	if (sys.estado == MANUAL)
-	{
-		menuManual();
-	}
 }
 
 void menuAjustes()
@@ -361,7 +297,7 @@ void menuParametros()
 		opDefecto[2] = String(sys.periodo);
 		tiempo = millis();
 
-		index = miMenu(menu, 7, opDefecto, index, lcd2);
+		index = miMenu(menu, 7, opDefecto, index, lcd1);
 
 		switch (index)
 		{
@@ -482,6 +418,7 @@ void menuManual()
 	String menu[] = { "Volver", "Manual Enc.", "Puerto Serial" };
 	int index = 0;
 	String opDefecto[3];
+  lcd2.clear();
 
 	do
 	{
