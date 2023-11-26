@@ -143,9 +143,9 @@ int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef,
 
 void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C display)
 {
-  int numPags, pag;
+ int numPags, pag;
   String linea;
-  int menuMaxLineas = 2;
+  int menuMaxLineas = 1;
 
   numPags = round((float)maxMenuItems / menuMaxLineas + 0.4999);
   pag = (opcionMenu - 1) / menuMaxLineas;
@@ -166,7 +166,12 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 
       if (linea.length() <= lcdColumns) {
         display.print(linea);
+        // Rellena con espacios si la línea es más corta que el ancho de la pantalla
+        for (int j = linea.length(); j < lcdColumns; j++) {
+          display.print(" ");
+        }
       } else {
+        // Muestra solo la parte visible en una línea
         display.print(linea.substring(0, lcdColumns));
       }
     }
