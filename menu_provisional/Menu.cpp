@@ -145,7 +145,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 {
  int numPags, pag;
   String linea;
-  int menuMaxLineas = 1;
+  int menuMaxLineas = 2;
 
   numPags = round((float)maxMenuItems / menuMaxLineas + 0.4999);
   pag = (opcionMenu - 1) / menuMaxLineas;
