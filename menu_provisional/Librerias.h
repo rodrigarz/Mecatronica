@@ -10,5 +10,6 @@
 #include "AiEsp32RotaryEncoder.h"
 #include "Menu.h"
 #include "Eeprom.h"
+#include <LiquidCrystal_I2C.h>
 
 #endif

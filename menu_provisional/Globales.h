@@ -12,32 +12,31 @@
 #define MANUAL_ENC 0
 #define PUERTO_SERIAL 1
 
-typdef struct
+typedef struct
 {
 	int estado;
 	int control;
 	int estadoManual;
 	double setPoint;
 	double periodo;
-    double kPZMVel;
-    double kDZMVel;
-    double kIZMVel;
-    double kPVel;
-    double kDVel;
-    double kIVel;
-    double kPZMPos;
-    double kDZMPos;
-    double kIZMPos;
-    double kPPos;
-    double kDPos;
-    double kIPos;
-    byte eepromValidData;
-};
+  double kPZMVel;
+  double kDZMVel;
+  double kIZMVel;
+  double kPVel;
+  double kDVel;
+  double kIVel;
+  double kPZMPos;
+  double kDZMPos;
+  double kIZMPos;
+  double kPPos;
+  double kDPos;
+  double kIPos;
+  byte eepromValidData;
+} system_t;
 
 extern system_t sys;
 extern String stringEstado[];
 extern String stringControl[];
-extern String stringEnctrada[];
 
 #endif // !Globales_h
 

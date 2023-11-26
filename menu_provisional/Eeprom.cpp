@@ -11,7 +11,7 @@ void settingsLoadFromEEprom(){
   preferences.getBytes("sysSettings",&sys,sizeof(sys));
   if (sys.eepromValidData!=54){
      Serial.println("Error de Eeprom. Cargando valores por defecto");
-     escribeLcd("Error de Eeprom","Val. defecto");
+     //escribeLcd2("Error de Eeprom","Val. defecto", lcd1);
      delay(3000);
      settingsWipe();
   }

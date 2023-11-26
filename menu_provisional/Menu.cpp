@@ -1,11 +1,9 @@
 
 #include <Arduino.h>
-#include <LiquidCrystal_I2C.h>
 #include "AiEsp32RotaryEncoder.h"
 #include "Menu.h"
 #include "Globales.h"
-
-extern AiEsp32RotaryEncoder myEnc;
+#include <LiquidCrystal_I2C.h>
 
 int lcdColumns = 16;
 int lcdRows = 2;
@@ -60,11 +58,19 @@ int8_t deltaEncoder()
 	return encoderDelta;
 }
 
-void incializaRotaryEncoder()
+void inicializaRotaryEncoder()
 {
 	rotaryEncoder.begin();
 	rotaryEncoder.setup([] {rotaryEncoder.readEncoder_ISR(); });
 	rotaryEncoder.setBoundaries(-10000, 10000, true);
+}
+
+void inicializacion()
+{
+  inicializaLcd(lcd1);
+  inicializaLcd(lcd2);
+  lcd1.backlight();
+  lcd2.backlight();
 }
 
 void inicializaLcd(LiquidCrystal_I2C display)
@@ -72,7 +78,7 @@ void inicializaLcd(LiquidCrystal_I2C display)
 	display.init();
 	display.backlight();
 	display.createChar(0, menuCursor);
-	d�splay.createChar(1, upArrow);
+	display.createChar(1, upArrow);
 	display.createChar(2, downArrow);
 }
 
@@ -89,7 +95,7 @@ void escribeLcd(String mensaje1, String mensaje2, LiquidCrystal_I2C display)
 void escribeLcd1(String mensaje, LiquidCrystal_I2C display)
 {
 	display.setCursor(0, 0);
-	diplay.print(mensaje);
+	display.print(mensaje);
 	for (int i = mensaje.length(); i < lcdColumns; i++) display.print(" ");
 }
 
@@ -144,7 +150,7 @@ int miMenu(String menu[], int maxMenuItems, String opDefecto[], int nMenuOpDef, 
 	return opcionMenu - 1;
 }
 
-void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrysyal_I2C display)
+void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C display)
 {
 	int numPags, pag;
 	String linea;
@@ -164,7 +170,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 			linea = menu[i] + " " + opDefecto[i];
 			if (opcionMenu == i + 1)
 			{
-				menuDesplazamiento(linea);
+				menuDesplazamiento(linea, display, k);
 			}
 			else
 			{
@@ -182,16 +188,16 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 		for (int i = 0; i < menuMaxLineas; i++)
 		{
 			display.setCursor(0, i);
-			linea = menu[maxMenuItems - menuMaxLineas + 1] + " " + opDefecto[maxMenuItems - menuMaxLienas + i];
+			linea = menu[maxMenuItems - menuMaxLineas + 1] + " " + opDefecto[maxMenuItems - menuMaxLineas + i];
 			if (opcionMenu == maxMenuItems - menuMaxLineas + i + 1)
 			{
-				menuDesplazamiento(linea);
+				menuDesplazamiento(linea, display, k);
 			}
 			else
 			{
 				display.print(" ");
 				if (linea.length() <= lcdColumns - 1)
-					dispay.print(linea);
+					display.print(linea);
 				else
 					display.print(linea.substring(0, lcdColumns - 1));
 			}
@@ -199,13 +205,13 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 	}
 	else
 	{
-		for (int = 0; i < menuMaxLineas; i++)
+		for (int i = 0; i < menuMaxLineas; i++)
 		{
 			display.setCursor(0, i);
-			linea = menu[pag * menumaxLineas + i] + " " + opDefecto[pag * menuMaxLineas + i];
-			if (opcionMenu == pag * menuMaxLineas + i + )
+			linea = menu[pag * menuMaxLineas + i] + " " + opDefecto[pag * menuMaxLineas + i];
+			if (opcionMenu == pag * menuMaxLineas + i + k)
 			{
-				menuDesplazamiento(linea);
+				menuDesplazamiento(linea, display, k);
 			}
 			else
 			{
@@ -219,7 +225,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 	}
 }
 
-void menuDesplazamiento(String linea)
+void menuDesplazamiento(String linea, LiquidCrystal_I2C display, int k)
 {
 	display.write(byte(0));
 	if (linea.length() <= lcdColumns - 1)
@@ -254,7 +260,7 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 		{
 			valor = valor + inc;
 		}
-		else if (valEnoder < valEncoderAnt)
+		else if (valEncoder < valEncoderAnt)
 		{
 			valor = valor - inc;
 		}
@@ -264,7 +270,7 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 		lcd2.setCursor(0, 0);
 		lcd2.print(cadena + String(":"));
 		lcd2.setCursor(0, 1);
-		lcd2.print(valor)
+		lcd2.print(valor);
 	}
 	do
 	{
@@ -292,7 +298,7 @@ void menuPrincipal()
 			opDefecto[1] = "*";
 			opDefecto[2] = "";
 		}
-		index = miMenu(menu, 4, opDefecto, index, lcd);
+		index = miMenu(menu, 4, opDefecto, index, lcd1);
 
 		switch (index)
 		{
@@ -324,7 +330,7 @@ void menuAjustes()
 	do
 	{
 		opDefecto[1] = (sys.control == VELOCIDAD ? "Velocidad" : "Posicion");
-		index miMenu(menu, 3, opDefecto, index, lcd);
+		index = miMenu(menu, 3, opDefecto, index, lcd1);
 		
 		switch (index)
 		{
@@ -343,12 +349,12 @@ void menuParametros()
 	String menu[] = { "Volver", "SetPoint", "Periodo", "Param vel.", "Param. pos", "Grabar param", "Borrar param" };
 	int index = 0;
 	String opDefecto[7];
-	lcd.clear();
-	lcd.setCursor(1, 0);
-	lcd.print("Parametros");
+	lcd1.clear();
+	lcd1.setCursor(1, 0);
+	lcd1.print("Parametros");
 	static long int tiempo = millis();
 
-	lcd.setCursor(0, 1);
+	lcd1.setCursor(0, 1);
 	do
 	{
 		opDefecto[1] = String(sys.setPoint);
@@ -373,7 +379,7 @@ void menuParametros()
 			break;
 		case 5:
 			settingsSaveToEEprom();
-			escribeLcd("Grabando");
+			escribeLcd1("Grabando", lcd2);
 			do
 			{
 
@@ -381,7 +387,7 @@ void menuParametros()
 			break;
 		case 6:
 			settingsWipe();
-			escribeLcd("Borrando param");
+			escribeLcd1("Borrando param", lcd2);
 			do
 			{
 			
@@ -405,7 +411,7 @@ void menuKvel()
 		opDefecto[5] = String(sys.kDVel);
 		opDefecto[6] = String(sys.kIVel);
 
-		index = miMenu(menu, 7, opDefecto, index, lcd);
+		index = miMenu(menu, 7, opDefecto, index, lcd1);
 		switch (index) {
 		case 1:                     ////--Kp Zona muerta--////
 			sys.kPZMVel = dameValor(menu[index], sys.kPZMVel, 0.01, 0, 1000);
@@ -429,7 +435,7 @@ void menuKvel()
 	} while (index != 0);
 }
 
-void menuKPos() {
+void menuKpos() {
 	String menu[] = { "Volver", "KpZMPos","KdZMPos","KiZMPos","KpPos","KdPos","KiPos" };
 	int index = 0;
 	String opDefecto[7];
@@ -442,7 +448,7 @@ void menuKPos() {
 		opDefecto[5] = String(sys.kDPos);
 		opDefecto[6] = String(sys.kIPos);
 
-		index = miMenu(menu, 7, opDefecto, index, lcd);
+		index = miMenu(menu, 7, opDefecto, index, lcd1);
 		switch (index) {
 		case 1:                     ////--Kp Zona muerta--////
 			sys.kPZMPos = dameValor(menu[index], sys.kPZMPos, 0.01, 0, 1000);
@@ -489,7 +495,7 @@ void menuManual()
 			opDefecto[1] = "";
 			opDefecto[2] = "*";
 		}
-		index = miMenu(menu, 3, opDefecto, index, lcd);
+		index = miMenu(menu, 3, opDefecto, index, lcd1);
 
 		switch (index)
 		{

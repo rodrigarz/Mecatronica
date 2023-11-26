@@ -1,4 +1,4 @@
-#findef Pantalla_h
+#ifndef Pantalla_h
 #define Pantalla_h
 
 #include <LiquidCrystal_I2C.h>
@@ -21,9 +21,10 @@ SCL       GPIO22
 
 int16_t leeEncoder();
 int8_t deltaEncoder();
-void inicializaRotarEncoder();
+void inicializaRotaryEncoder();
 
 void inicializaLcd(LiquidCrystal_I2C display);
+void inicializacion();
 
 void escribeLcd(String mensaje1, String mensaje2, LiquidCrystal_I2C display);
 void escribeLcd1(String mensaje, LiquidCrystal_I2C display);
@@ -33,8 +34,8 @@ bool botonEncoderPulsado();
 
 int miMenu(String menu[],  int maxMenuItems, String opDefecto[], int nMenuOpDef, LiquidCrystal_I2C display);
 void muestraMenu(String menu[], int maxMenuitems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C display);
-double dameValor(Strig cadena, double valor, double inc, double min, double max);
-void menuDesplazamiento(String linea);
+double dameValor(String cadena, double valor, double inc, double min, double max);
+void menuDesplazamiento(String linea, LiquidCrystal_I2C display, int k);
 
 void menuPrincipal();
 void menuManual();
