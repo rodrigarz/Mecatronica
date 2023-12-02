@@ -12,6 +12,12 @@
 #define MANUAL_ENC 0
 #define PUERTO_SERIAL 1
 
+
+
+typedef struct struct_message {
+    int posServo;
+} struct_message;
+
 typedef struct
 {
 	int estado;
@@ -37,6 +43,8 @@ typedef struct
 extern system_t sys;
 extern String stringEstado[];
 extern String stringControl[];
+
+
 
 #endif // !Globales_h
 

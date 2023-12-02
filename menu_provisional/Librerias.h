@@ -11,5 +11,7 @@
 #include "Menu.h"
 #include "Eeprom.h"
 #include <LiquidCrystal_I2C.h>
+#include "WiFi.h"
+#include <esp_now.h>
 
 #endif

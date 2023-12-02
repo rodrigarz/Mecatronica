@@ -35,6 +35,8 @@ bool botonEncoderPulsado();
 int miMenu(String menu[],  int maxMenuItems, String opDefecto[], int nMenuOpDef, LiquidCrystal_I2C display);
 void muestraMenu(String menu[], int maxMenuitems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C &display);
 double dameValor(String cadena, double valor, double inc, double min, double max);
+int dameValorInt(String cadena, int valor, int inc, int min, int max);
+void mandarDatos();
 
 void menuPrincipal();
 void menuManual();

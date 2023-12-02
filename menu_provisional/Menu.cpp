@@ -12,6 +12,12 @@ int lcdRows = 2;
 LiquidCrystal_I2C lcd1(DIRLCD1, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd2(DIRLCD2, lcdColumns, lcdRows);
 
+uint8_t placaServo[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
+
+
+
+struct struct_message data;
+
 byte downArrow[8] = {
   0b00100, //   *
   0b00100, //   *
@@ -118,7 +124,10 @@ int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef,
   muestraMenu(menu, maxMenuItems,  opDefecto, opcionMenu, display);
   while (rotaryEncoder.currentButtonState() != BUT_RELEASED) {
     valEncoder = rotaryEncoder.readEncoder();
-    Serial.println(valEncoder);
+    if(valEncoderAnt != valEncoder)
+    {
+      Serial.println(valEncoder);
+    }
     if(valEncoder>valEncoderAnt){     
             opcionMenu++;
             opcionMenu = constrain(opcionMenu, 1, maxMenuItems);
@@ -211,6 +220,50 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 		lcd2.print(valor);
 	}
 	delay(100);
+  esp_err_t result = esp_now_send(placaServo, (uint8_t *) &data, sizeof(data));
+
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+   Serial.println("Error sending the data");
+  }
+	return valor;
+}
+
+
+int dameValorInt(String cadena, int valor, int inc, int min, int max)
+{
+	int valEncoder, valEncoderAnt;
+	lcd2.clear();
+	lcd2.setCursor(0, 0);
+	lcd2.print(cadena + String(":"));
+	lcd2.setCursor(0, 1);
+	lcd2.print(valor);
+	static long int tiempo = millis();
+
+	valEncoderAnt = leeEncoder();
+	while (rotaryEncoder.currentButtonState() != BUT_RELEASED)
+	{
+		valEncoder = leeEncoder();
+		if (valEncoder > valEncoderAnt)
+		{
+			valor = valor + inc;
+		}
+		else if (valEncoder < valEncoderAnt)
+		{
+			valor = valor - inc;
+		}
+		valor = constrain(valor, min, max);
+		valEncoderAnt = valEncoder;
+		lcd2.clear();
+		lcd2.setCursor(0, 0);
+		lcd2.print(cadena + String(":"));
+		lcd2.setCursor(0, 1);
+		lcd2.print(valor);
+	}
+	delay(100);
+
 	return valor;
 }
 
@@ -277,7 +330,7 @@ void menuAjustes()
 
 void menuParametros()
 {
-	String menu[] = { "Volver", "SetPoint", "Periodo", "Param vel.", "Param. pos", "Grabar param", "Borrar param" };
+	String menu[] = { "Volver", "PosServo", "Periodo", "Param vel.", "Param. pos", "Grabar param", "Borrar param" };
 	int index = 0;
 	String opDefecto[7];
 	lcd1.clear();
@@ -288,7 +341,7 @@ void menuParametros()
 	lcd1.setCursor(0, 1);
 	do
 	{
-		opDefecto[1] = String(sys.setPoint);
+		opDefecto[1] = String(data.posServo);
 		opDefecto[2] = String(sys.periodo);
 		tiempo = millis();
 
@@ -297,7 +350,8 @@ void menuParametros()
 		switch (index)
 		{
 		case 1:
-			sys.setPoint = dameValor(menu[index], sys.setPoint, 10, -10000, 10000);
+			data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
+      mandarDatos();
 			break;
 		case 2:
 			sys.periodo = dameValor(menu[index], sys.periodo, 0.05, 0, 1000);
@@ -326,6 +380,7 @@ void menuParametros()
 			break;
 		}
 	} while (index != 0);
+
 }
 
 void menuKvel()
@@ -439,4 +494,16 @@ void menuManual()
 			break;
 		}
 	} while (index != 0);
+}
+
+void mandarDatos()
+{
+  esp_err_t result = esp_now_send(placaServo, (uint8_t *) &data, sizeof(data));
+
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+   Serial.println("Error sending the data");
+  }
 }
