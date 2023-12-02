@@ -213,21 +213,11 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 		}
 		valor = constrain(valor, min, max);
 		valEncoderAnt = valEncoder;
-		lcd2.clear();
-		lcd2.setCursor(0, 0);
-		lcd2.print(cadena + String(":"));
 		lcd2.setCursor(0, 1);
 		lcd2.print(valor);
 	}
 	delay(100);
-  esp_err_t result = esp_now_send(placaServo, (uint8_t *) &data, sizeof(data));
-
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-   Serial.println("Error sending the data");
-  }
+  lcd2.clear();
 	return valor;
 }
 
@@ -256,14 +246,11 @@ int dameValorInt(String cadena, int valor, int inc, int min, int max)
 		}
 		valor = constrain(valor, min, max);
 		valEncoderAnt = valEncoder;
-		lcd2.clear();
-		lcd2.setCursor(0, 0);
-		lcd2.print(cadena + String(":"));
 		lcd2.setCursor(0, 1);
 		lcd2.print(valor);
 	}
 	delay(100);
-
+  lcd2.clear();
 	return valor;
 }
 
