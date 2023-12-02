@@ -10,6 +10,10 @@ int lcdRows = 2;
 LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd2(0x3F, lcdColumns, lcdRows);
 
+int posServo = 0;
+
+struct struct_message data;
+
 // set LCD address, number of columns and rows
 // if you don't know your display address, run an I2C scanner sketch
 //LiquidCrystal_I2C lcd1(0x27, lcdColumns, lcdRows);
