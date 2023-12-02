@@ -7,7 +7,8 @@
 #define ROTARY_ENCODER_BUTTON_PIN 32
 #define ROTARY_ENCODER_VCC_PIN -1
 
-uint8_t placaServo[] = {0xB4, 0xE6, 0x2D, 0xFB, 0x1B, 0xBD};
+//uint8_t placaServo[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t placaServo[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
 
 int posServo = 0;
 String success;
@@ -33,10 +34,12 @@ int dameValor(int valor, int inc, int min, int max)
 {
 	int valEncoder, valEncoderAnt;
 	static long int tiempo = millis();
-
+  
+  
 	valEncoderAnt = rotaryEncoder.readEncoder();
 	while (rotaryEncoder.currentButtonState() != BUT_RELEASED)
 	{
+    int ValorAnt = valor;
 		valEncoder = rotaryEncoder.readEncoder();;
 		if (valEncoder > valEncoderAnt)
 		{
@@ -48,8 +51,11 @@ int dameValor(int valor, int inc, int min, int max)
 		}
 		valor = constrain(valor, min, max);
 		valEncoderAnt = valEncoder;
-    Serial.println(valor);
-    delay(500);
+    if(valor != ValorAnt)
+    {
+      Serial.println(valor);
+    }
+    delay(100);
 	}
 	
 	return valor;
@@ -80,10 +86,7 @@ void setup() {
   }
 
   // Init ESP-NOW
- if (esp_now_add_peer(&peerInfo) != ESP_OK){
-    Serial.println("Failed to add peer");
-    return;
-  }
+
 
   esp_now_register_send_cb(OnDataSent);
   
@@ -92,14 +95,18 @@ void setup() {
   peerInfo.channel = 0;  
   peerInfo.encrypt = false;
 
+   if (esp_now_add_peer(&peerInfo) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   Serial.println("Entro a dame valor");
-  data.posServo = dameValor(data.posServo, 1, 0, 180);
+  data.posServo = dameValor(data.posServo, 2, 0, 180);
   Serial.println(data.posServo);
-  delay(250);
   esp_err_t result = esp_now_send(placaServo, (uint8_t *) &data, sizeof(data));
 
   if (result == ESP_OK) {
@@ -108,8 +115,6 @@ void loop() {
   else {
    Serial.println("Error sending the data");
   }
-  delay(150);
-  
   
 
 }

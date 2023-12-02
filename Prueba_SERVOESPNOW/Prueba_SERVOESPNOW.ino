@@ -1,6 +1,6 @@
 #include "WiFi.h"
 #include <esp_now.h>
-#include "Servo.h"
+#include <Servo.h>
 
 
 int posServo = 0;
@@ -33,6 +33,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  Serial.println(WiFi.macAddress());
   servo1.attach(servoPin);
   WiFi.mode(WIFI_STA);
 
@@ -40,14 +41,22 @@ void setup() {
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
     return;
+  } else
+  {
+    Serial.print("Todo ok");
   }
   esp_now_register_recv_cb(OnDataRecv);
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  int servoPosition = map(posServo, 0, 180, 0, 180);
+  int servoPosAnt = 0;
+  int servoPosition = map(myData.posServo, 0, 180, 0, 180);
+  servoPosAnt = servoPosition;
   servo1.write(servoPosition);
-  Serial.println(servoPosition);
+  if(servoPosAnt != servoPosition)
+  {
+    Serial.println(servoPosition);
+  }
   delay(100);
 
 }
