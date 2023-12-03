@@ -15,6 +15,7 @@
 
 
 typedef struct struct_message {
+    int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap
     int posServo;
     int posExpulsor;
     int pasosPap;

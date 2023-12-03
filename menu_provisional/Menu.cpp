@@ -518,18 +518,22 @@ void menuManualEncoder()
    {
     case 1:
     data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
+    data.indicacion = 1;
     mandarDatos();
 		break;
     case 2:
     data.posExpulsor = dameValorInt(menu[index], data.posExpulsor, 1, 0, 1);
+    data.indicacion = 2;
     mandarDatos();
     break;
     case 3:
     data.pasosPap = dameValorInt(menu[index], data.pasosPap, 5, -1000, 1000);
+    data.indicacion = 3;
     mandarDatos();
     break;
     case 4:
     data.posPap = dameValorInt(menu[index], data.posPap, 1, 1, 3);
+    data.indicacion = 4;
     mandarDatos();
     break;
    }
