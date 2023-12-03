@@ -9,7 +9,9 @@ uint8_t placaServo2[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa 
 
 esp_now_peer_info_t peerInfo;
 int posServo = 0;
-
+int posExpulsor = 0;
+int pasosPap = 0;
+int posPap = 1;
 
 
 

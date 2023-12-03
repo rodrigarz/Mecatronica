@@ -46,6 +46,6 @@ void menuAjustes();
 void menuParametros();
 void menuKvel();
 void menuKpos();
-void menuServo();
+void menuManualEncoder();
 
 #endif

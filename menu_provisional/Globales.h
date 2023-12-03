@@ -16,6 +16,9 @@
 
 typedef struct struct_message {
     int posServo;
+    int posExpulsor;
+    int pasosPap;
+    int posPap;
 } struct_message;
 
 typedef struct

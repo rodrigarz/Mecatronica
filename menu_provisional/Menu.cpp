@@ -192,6 +192,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 double dameValor(String cadena, double valor, double inc, double min, double max)
 {
 	int valEncoder, valEncoderAnt;
+  int cont = 0;
 	lcd2.clear();
 	lcd2.setCursor(0, 0);
 	lcd2.print(cadena + String(":"));
@@ -213,6 +214,14 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 		}
 		valor = constrain(valor, min, max);
 		valEncoderAnt = valEncoder;
+    cont = cont + 1;
+    if (cont == 10)
+    {
+      lcd2.clear();
+      cont = 0;
+    }
+    lcd2.setCursor(0, 0);
+	  lcd2.print(cadena + String(":"));
 		lcd2.setCursor(0, 1);
 		lcd2.print(valor);
 	}
@@ -225,6 +234,7 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 int dameValorInt(String cadena, int valor, int inc, int min, int max)
 {
 	int valEncoder, valEncoderAnt;
+  int cont = 0;
 	lcd2.clear();
 	lcd2.setCursor(0, 0);
 	lcd2.print(cadena + String(":"));
@@ -246,6 +256,14 @@ int dameValorInt(String cadena, int valor, int inc, int min, int max)
 		}
 		valor = constrain(valor, min, max);
 		valEncoderAnt = valEncoder;
+    cont = cont + 1;
+    if (cont == 10)
+    {
+      lcd2.clear();
+      cont = 0;
+    }
+    lcd2.setCursor(0, 0);
+	  lcd2.print(cadena + String(":"));
 		lcd2.setCursor(0, 1);
 		lcd2.print(valor);
 	}
@@ -474,7 +492,7 @@ void menuManual()
 		{
 		case 1:
 			sys.estadoManual = MANUAL_ENC;
-      menuServo();
+      menuManualEncoder();
 			break;
 		case 2:
 			sys.estadoManual = PUERTO_SERIAL;
@@ -483,17 +501,19 @@ void menuManual()
 	} while (index != 0);
 }
 
-void menuServo()
+void menuManualEncoder()
 {
-  String menu[] = {"Volver", "Grados", "Exoulsor"};
+  String menu[] = {"Volver", "Grados Servo", "Expulsor", "Pasos PaP", "Pos PaP"};
   int index = 0;
-  String opDefecto[3];
+  String opDefecto[5];
   lcd2.clear();
   do
   {
    opDefecto[1] = String(data.posServo);
-   opDefecto[2] = String(data.posServo);
-   index = miMenu(menu, 3, opDefecto, index, lcd2);
+   opDefecto[2] = String(data.posExpulsor);
+   opDefecto[3] = String(data.pasosPap);
+   opDefecto[4] = String(data.posPap);
+   index = miMenu(menu, 5, opDefecto, index, lcd2);
    switch(index)
    {
     case 1:
@@ -501,18 +521,16 @@ void menuServo()
     mandarDatos();
 		break;
     case 2:
-    for(int i = 0; i <= 12; i++)
-    {
-      data.posServo = 15*i;
-      mandarDatos();
-      delay(100);
-    }
-    for(int i = 6; i >=0 ; i--)
-    {
-      data.posServo = 30*i;
-      mandarDatos();
-      delay(100);
-    }
+    data.posExpulsor = dameValorInt(menu[index], data.posExpulsor, 1, 0, 1);
+    mandarDatos();
+    break;
+    case 3:
+    data.pasosPap = dameValorInt(menu[index], data.pasosPap, 5, -1000, 1000);
+    mandarDatos();
+    break;
+    case 4:
+    data.posPap = dameValorInt(menu[index], data.posPap, 1, 1, 3);
+    mandarDatos();
     break;
    }
   }while (index != 0);
