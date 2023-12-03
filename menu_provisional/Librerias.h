@@ -5,7 +5,6 @@
 #include<math.h>
 
 #include "Globales.h"
-#include "PID_v1.h"
 #include <ESP32Encoder.h>
 #include "AiEsp32RotaryEncoder.h"
 #include "Menu.h"

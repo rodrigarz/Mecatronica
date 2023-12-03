@@ -1,6 +1,5 @@
 #include "Librerias.h"
 
-system_t sys;
 
 String stringEstado[] = {"Automatico", "Manual"};
 String stringControl[] = {"Vel", "Pos"};
@@ -31,7 +30,7 @@ void setup() {
   inicializaRotaryEncoder();         //Incialización encoder rotativo HW-040 
 
   ESP32Encoder::useInternalWeakPullResistors=UP;
-  escribeLcd(stringEstado[sys.estado], stringControl[sys.control]);
+  escribeLcd(stringEstado[data.estado], stringControl[data.control]);
 
   WiFi.mode(WIFI_STA);
   if (esp_now_init() != ESP_OK) {

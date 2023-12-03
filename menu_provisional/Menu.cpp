@@ -281,7 +281,7 @@ void menuPrincipal()
 
 	do
 	{
-		if (sys.estado == AUTOMATICO)
+		if (data.estado == AUTOMATICO)
 		{
 			opDefecto[1] = "";
 			opDefecto[2] = "*";
@@ -296,11 +296,11 @@ void menuPrincipal()
 		switch (index)
 		{
 		case 1:
-			sys.estado = MANUAL;
+			data.estado = MANUAL;
       menuManual();
 			break;
 		case 2:
-			sys.estado = AUTOMATICO;
+			data.estado = AUTOMATICO;
 			break;
 		case 3:
 			menuAjustes();
@@ -318,13 +318,13 @@ void menuAjustes()
 
 	do
 	{
-		opDefecto[1] = (sys.control == VELOCIDAD ? "Velocidad" : "Posicion");
+		opDefecto[1] = (data.control == VELOCIDAD ? "Velocidad" : "Posicion");
 		index = miMenu(menu, 3, opDefecto, index, lcd1);
 		
 		switch (index)
 		{
 		case 1:
-			sys.control = (sys.control == VELOCIDAD ? POSICION : VELOCIDAD);
+			data.control = (data.control == VELOCIDAD ? POSICION : VELOCIDAD);
 			break;
 		case 2:
 			menuParametros();
@@ -346,8 +346,8 @@ void menuParametros()
 	lcd1.setCursor(0, 1);
 	do
 	{
-		opDefecto[1] = String(sys.setPoint);
-		opDefecto[2] = String(sys.periodo);
+		opDefecto[1] = String(data.setPoint);
+		opDefecto[2] = String(data.periodo);
 		tiempo = millis();
 
 		index = miMenu(menu, 7, opDefecto, index, lcd1);
@@ -355,10 +355,10 @@ void menuParametros()
 		switch (index)
 		{
 		case 1:
-			sys.setPoint = dameValorInt(menu[index], sys.setPoint, 10, -1000, 1000);
+			data.setPoint = dameValorInt(menu[index], data.setPoint, 10, -1000, 1000);
 			break;
 		case 2:
-			sys.periodo = dameValor(menu[index], sys.periodo, 0.05, 0, 1000);
+			data.periodo = dameValor(menu[index], data.periodo, 0.05, 0, 1000);
 			break;
 		case 3:
 			menuKvel();
@@ -394,32 +394,32 @@ void menuKvel()
 	String opDefecto[7];
 
 	do {
-		opDefecto[1] = String(sys.kPZMVel);
-		opDefecto[2] = String(sys.kDZMVel);
-		opDefecto[3] = String(sys.kIZMVel);
-		opDefecto[4] = String(sys.kPVel);
-		opDefecto[5] = String(sys.kDVel);
-		opDefecto[6] = String(sys.kIVel);
+		opDefecto[1] = String(data.kPZMVel);
+		opDefecto[2] = String(data.kDZMVel);
+		opDefecto[3] = String(data.kIZMVel);
+		opDefecto[4] = String(data.kPVel);
+		opDefecto[5] = String(data.kDVel);
+		opDefecto[6] = String(data.kIVel);
 
 		index = miMenu(menu, 7, opDefecto, index, lcd1);
 		switch (index) {
 		case 1:                     ////--Kp Zona muerta--////
-			sys.kPZMVel = dameValor(menu[index], sys.kPZMVel, 0.01, 0, 1000);
+			data.kPZMVel = dameValor(menu[index], data.kPZMVel, 0.01, 0, 1000);
 			break;
 		case 2:                     ////--Kd Zona Muerta--////
-			sys.kDZMVel = dameValor(menu[index], sys.kDZMVel, 0.01, 0, 1000);
+			data.kDZMVel = dameValor(menu[index], data.kDZMVel, 0.01, 0, 1000);
 			break;
 		case 3:                     ////--Ki Zona Muerta--////
-			sys.kIZMVel = dameValor(menu[index], sys.kIZMVel, 0.01, 0, 1000);
+			data.kIZMVel = dameValor(menu[index], data.kIZMVel, 0.01, 0, 1000);
 			break;
 		case 4:                     ////--Kp--////
-			sys.kPVel = dameValor(menu[index], sys.kPVel, 0.01, 0, 1000);
+			data.kPVel = dameValor(menu[index], data.kPVel, 0.01, 0, 1000);
 			break;
 		case 5:                     ////--Kd--////
-			sys.kDVel = dameValor(menu[index], sys.kDVel, 0.01, 0, 1000);
+			data.kDVel = dameValor(menu[index], data.kDVel, 0.01, 0, 1000);
 			break;
 		case 6:                     ////--Ki--////
-			sys.kIVel = dameValor(menu[index], sys.kIVel, 0.01, 0, 1000);
+			data.kIVel = dameValor(menu[index], data.kIVel, 0.01, 0, 1000);
 			break;
 		}
 	} while (index != 0);
@@ -431,36 +431,36 @@ void menuKpos() {
 	String opDefecto[7];
 
 	do {
-		opDefecto[1] = String(sys.kPZMPos);
-		opDefecto[2] = String(sys.kDZMPos);
-		opDefecto[3] = String(sys.kIZMPos);
-		opDefecto[4] = String(sys.kPPos);
-		opDefecto[5] = String(sys.kDPos);
-		opDefecto[6] = String(sys.kIPos);
+		opDefecto[1] = String(data.kPZMPos);
+		opDefecto[2] = String(data.kDZMPos);
+		opDefecto[3] = String(data.kIZMPos);
+		opDefecto[4] = String(data.kPPos);
+		opDefecto[5] = String(data.kDPos);
+		opDefecto[6] = String(data.kIPos);
 
 		index = miMenu(menu, 7, opDefecto, index, lcd1);
 		switch (index) {
 		case 1:                     ////--Kp Zona muerta--////
-			sys.kPZMPos = dameValor(menu[index], sys.kPZMPos, 0.01, 0, 1000);
+			data.kPZMPos = dameValor(menu[index], data.kPZMPos, 0.01, 0, 1000);
 
 			break;
 		case 2:                     ////--Kd Zona Muerta--////
-			sys.kDZMPos = dameValor(menu[index], sys.kDZMPos, 0.01, 0, 1000);
+			data.kDZMPos = dameValor(menu[index], data.kDZMPos, 0.01, 0, 1000);
 
 			break;
 		case 3:                     ////--Ki Zona Muerta--////
-			sys.kIZMPos = dameValor(menu[index], sys.kIZMPos, 0.01, 0, 1000);
+			data.kIZMPos = dameValor(menu[index], data.kIZMPos, 0.01, 0, 1000);
 			break;
 		case 4:                     ////--Kp--////
-			sys.kPPos = dameValor(menu[index], sys.kPPos, 0.01, 0, 1000);
+			data.kPPos = dameValor(menu[index], data.kPPos, 0.01, 0, 1000);
 
 			break;
 		case 5:                     ////--Kd--////
-			sys.kDPos = dameValor(menu[index], sys.kDPos, 0.01, 0, 1000);
+			data.kDPos = dameValor(menu[index], data.kDPos, 0.01, 0, 1000);
 
 			break;
 		case 6:                     ////--Ki--////
-			sys.kIPos = dameValor(menu[index], sys.kIPos, 0.01, 0, 1000);
+			data.kIPos = dameValor(menu[index], data.kIPos, 0.01, 0, 1000);
 			break;
 		}
 	} while (index != 0);
@@ -476,7 +476,7 @@ void menuManual()
 
 	do
 	{
-		if (sys.estadoManual == MANUAL_ENC)
+		if (data.estadoManual == MANUAL_ENC)
 		{
 			opDefecto[1] = "*";
 			opDefecto[2] = "";
@@ -491,11 +491,12 @@ void menuManual()
 		switch (index)
 		{
 		case 1:
-			sys.estadoManual = MANUAL_ENC;
+			data.estadoManual = MANUAL_ENC;
       menuManualEncoder();
 			break;
 		case 2:
-			sys.estadoManual = PUERTO_SERIAL;
+			data.estadoManual = PUERTO_SERIAL;
+      menuPuertoSerial();
 			break;
 		}
 	} while (index != 0);
@@ -503,15 +504,15 @@ void menuManual()
 
 void menuManualEncoder()
 {
-  String menu[] = {"Volver", "Grados Servo", "Expulsor", "Pasos PaP", "Pos PaP"};
+  String menu[] = {"Volver", "Grados Servo", "Expulsor", "Grados mesa", "Pos PaP", "Mov Cinta"};
   int index = 0;
-  String opDefecto[5];
+  String opDefecto[6];
   lcd2.clear();
   do
   {
    opDefecto[1] = String(data.posServo);
    opDefecto[2] = String(data.posExpulsor);
-   opDefecto[3] = String(data.pasosPap);
+   opDefecto[3] = String(data.gradosPaP);
    opDefecto[4] = String(data.posPap);
    index = miMenu(menu, 5, opDefecto, index, lcd2);
    switch(index)
@@ -527,7 +528,7 @@ void menuManualEncoder()
     mandarDatos();
     break;
     case 3:
-    data.pasosPap = dameValorInt(menu[index], data.pasosPap, 5, -1000, 1000);
+    data.gradosPaP = dameValorInt(menu[index], data.gradosPaP, 5, -1000, 1000);
     data.indicacion = 3;
     mandarDatos();
     break;
@@ -536,9 +537,103 @@ void menuManualEncoder()
     data.indicacion = 4;
     mandarDatos();
     break;
+    case 5:
+    menuMoverCinta();
+    break;
    }
   }while (index != 0);
 
+}
+
+void menuMoverCinta()
+{
+  String menu[] = {"Volver", "Tipo control", "SetPoint"};
+  int index = 0;
+  String opDefecto[3];
+  lcd2.clear();
+  do
+  {
+    opDefecto[1] = (data.control == VELOCIDAD ? "Velocidad":"Posicion");
+    index = miMenu(menu, 3, opDefecto, index, lcd2);
+    switch(index)
+    {
+      case 1:
+        data.control=(data.control==VELOCIDAD?POSICION:VELOCIDAD);
+        break;
+      case 2:
+        data.setPoint = dameValor(menu[index], data.setPoint, 10, -10000, 10000);
+        mandarDatos();
+        break;
+    }
+  } while(index!=0);
+}
+
+void menuPuertoSerial()
+{
+  String comando, entrada;
+  double primero, segundo;
+  int salir = 0;
+
+  lcd1.clear();
+  lcd2.clear();
+  lcd1.setCursor(0, 0);
+  lcd1.print("Escuchando");
+  lcd1.setCursor(0, 1);
+  lcd1.print("Puerto Serial");
+  do
+  {
+    do
+    {}while(!Serial.available());
+    if(Serial.available() != 0)
+    {
+      String entrada = Serial.readStringUntil('\n');
+      if(sscanf(entrada.c_str(), "%s %lf %lf", comando, &primero, &segundo) == 3)
+      {
+        lcd2.setCursor(0, 0);
+        lcd2.print("Recibido:");
+        lcd2.setCursor(0, 1);
+        lcd2.print(comando);
+      } else if(sscanf(entrada.c_str(), "%s %lf", comando, &primero) == 2)
+      {
+        lcd2.setCursor(0, 0);
+        lcd2.print("Recibido:");
+        lcd2.setCursor(0, 1);
+        lcd2.print(String(comando));
+        
+      } else{
+        salir = 1;
+        lcd2.setCursor(0, 0);
+        lcd2.print("Error al leer");
+      }
+      
+    }
+    if(comando == "mmesa")
+    {
+      data.gradosPaP = primero;
+      data.velPap = segundo;
+      lcd2.setCursor(0, 1);
+      lcd2.print("mmesa");
+
+    } else if(comando == "mcintav")
+    {
+      data.velCinta = primero;
+      lcd2.setCursor(0, 1);
+      lcd2.print("mcintav");
+    } else if(comando == "mcintap")
+    {
+      data.incrCinta = primero;
+      lcd2.setCursor(0, 1);
+      lcd2.print("mcintap");
+    } else if (comando == "mexpulsor")
+    {
+      data.posExpulsor = primero;
+      lcd2.setCursor(0, 1);
+      lcd2.print("mexpulsor");
+    }
+    mandarDatos();
+    delay(2000);
+    lcd2.clear();
+  } while (salir != 1);
 }
 
 void mandarDatos()

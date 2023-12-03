@@ -3,55 +3,54 @@
 
 Preferences preferences;
 
-void settingsLoadFromEEprom(){
+void settingsLoadFromEEprom() {
 
   settingsReset();
 
-  preferences.begin("settings", false);  
-  preferences.getBytes("sysSettings",&sys,sizeof(sys));
-  if (sys.eepromValidData!=54){
-     Serial.println("Error de Eeprom. Cargando valores por defecto");
-     //escribeLcd2("Error de Eeprom","Val. defecto", lcd1);
-     delay(3000);
-     settingsWipe();
+  preferences.begin("settings", false);
+  preferences.getBytes("sysSettings", &data, sizeof(data));
+  if (data.eepromValidData != 54) {
+    Serial.println("Error de Eeprom. Cargando valores por defecto");
+    //escribeLcd2("Error de Eeprom","Val. defecto", lcd1);
+    delay(3000);
+    settingsWipe();
   }
-   preferences.end();
+  preferences.end();
 }
 
-void settingsSaveToEEprom(){
+void settingsSaveToEEprom() {
 
-  preferences.begin("settings", false);  
-  sys.eepromValidData=54; //Un número definido cualquiera
-  preferences.putBytes("sysSettings",&sys,sizeof(sys));
+  preferences.begin("settings", false);
+  data.eepromValidData = 54;  //Un número definido cualquiera
+  preferences.putBytes("sysSettings", &data, sizeof(data));
   preferences.end();
-  
 }
 
 void settingsReset() {
-    sys.estado=MANUAL;
-    sys.control=VELOCIDAD;
-    sys.estadoManual=MANUAL_ENC;
-    sys.setPoint=500;
-    sys.periodo=15;
-    sys.kPZMVel=0.2;
-    sys.kDZMVel=0;
-    sys.kIZMVel=0.9;
-    sys.kPVel=0.2;
-    sys.kDVel=0;
-    sys.kIVel=0.15;
-    sys.kPZMPos=2;
-    sys.kDZMPos=0;
-    sys.kIZMPos=0.15;
-    sys.kPPos=0.3;
-    sys.kDPos=0;
-    sys.kIPos=0.05;
-    //sys.eepromValidData=54; //Un número definido cualquiera
+  data.estado = MANUAL;
+  data.control = VELOCIDAD;
+  data.estadoManual = MANUAL_ENC;
+  data.setPoint = 500;
+  data.periodo = 15;
+  data.kPZMVel = 0.2;
+  data.kDZMVel = 0;
+  data.kIZMVel = 0.9;
+  data.kPVel = 0.2;
+  data.kDVel = 0;
+  data.kIVel = 0.15;
+  data.kPZMPos = 2;
+  data.kDZMPos = 0;
+  data.kIZMPos = 0.15;
+  data.kPPos = 0.3;
+  data.kDPos = 0;
+  data.kIPos = 0.05;
+  //data.eepromValidData=54; //Un número definido cualquiera
 }
 
-void settingsWipe(){
+void settingsWipe() {
   settingsReset();
   preferences.begin("settings", false);
-  preferences.clear();      // Limpia la eeprom 
+  preferences.clear();  // Limpia la eeprom
   preferences.end();
   //ESP.restart();
 }

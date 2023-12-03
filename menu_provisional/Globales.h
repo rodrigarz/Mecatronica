@@ -13,18 +13,17 @@
 #define PUERTO_SERIAL 1
 
 
-
+//Tamaño actual: 145 bytes (max esp-now 250 byets)
 typedef struct struct_message {
-    int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap
-    int posServo;
-    int posExpulsor;
-    int pasosPap;
-    int posPap;
-} struct_message;
-
-typedef struct
-{
-	int estado;
+  int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap
+  int posServo;
+  int posExpulsor;
+  int gradosPaP;
+  int velPap;
+  int velCinta;
+  int incrCinta;
+  int posPap;
+  int estado;
 	int control;
 	int estadoManual;
 	double setPoint;
@@ -42,9 +41,11 @@ typedef struct
   double kDPos;
   double kIPos;
   byte eepromValidData;
-} system_t;
+} struct_message;
 
-extern system_t sys;
+
+extern struct_message data;
+
 extern String stringEstado[];
 extern String stringControl[];
 
