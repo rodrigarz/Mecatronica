@@ -328,7 +328,7 @@ void menuParametros()
 	lcd1.setCursor(0, 1);
 	do
 	{
-		opDefecto[1] = String(data.posServo);
+		opDefecto[1] = String(sys.setPoint);
 		opDefecto[2] = String(sys.periodo);
 		tiempo = millis();
 
@@ -337,8 +337,7 @@ void menuParametros()
 		switch (index)
 		{
 		case 1:
-			data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
-      mandarDatos();
+			sys.setPoint = dameValorInt(menu[index], sys.setPoint, 10, -1000, 1000);
 			break;
 		case 2:
 			sys.periodo = dameValor(menu[index], sys.periodo, 0.05, 0, 1000);
@@ -475,12 +474,49 @@ void menuManual()
 		{
 		case 1:
 			sys.estadoManual = MANUAL_ENC;
+      menuServo();
 			break;
 		case 2:
 			sys.estadoManual = PUERTO_SERIAL;
 			break;
 		}
 	} while (index != 0);
+}
+
+void menuServo()
+{
+  String menu[] = {"Volver", "Grados", "Exoulsor"};
+  int index = 0;
+  String opDefecto[3];
+  lcd2.clear();
+  do
+  {
+   opDefecto[1] = String(data.posServo);
+   opDefecto[2] = String(data.posServo);
+   index = miMenu(menu, 3, opDefecto, index, lcd2);
+   switch(index)
+   {
+    case 1:
+    data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
+    mandarDatos();
+		break;
+    case 2:
+    for(int i = 0; i <= 12; i++)
+    {
+      data.posServo = 15*i;
+      mandarDatos();
+      delay(100);
+    }
+    for(int i = 6; i >=0 ; i--)
+    {
+      data.posServo = 30*i;
+      mandarDatos();
+      delay(100);
+    }
+    break;
+   }
+  }while (index != 0);
+
 }
 
 void mandarDatos()
