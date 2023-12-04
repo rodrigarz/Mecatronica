@@ -1,7 +1,9 @@
 const int dirPin = 5;
 const int stepPin = 15;
 const int EN = 18;
-const int steps = 200*16;  // Ajusta esto según la especificación de tu motor
+const int steps = 200*16;  
+const int pinFinalCarrera = 19;
+
 int stepDelay;
 
 void setup() {
@@ -10,10 +12,19 @@ void setup() {
   pinMode(EN, OUTPUT);
   digitalWrite(EN, LOW);  // Habilitar el motor al inicio
   Serial.begin(9600);     // Inicializar el puerto serie con una velocidad de baudios específica
+  pinMode(pinFinalCarrera, INPUT_PULLUP);
+  int stepsInicial=2;
+  Serial.println(digitalRead(pinFinalCarrera));
+
+  while(digitalRead(pinFinalCarrera)==1)
+  {
+    mueveMotorB(stepsInicial);
+  }
 }
 
 void loop() {
   int command;
+  
   // Solicitar un valor hasta que se reciba 1, 2 o 3
   while (true) {
     Serial.println("Ingrese 1 para 90 grados, 2 para 180 grados, 3 para 270 grados:");
@@ -48,7 +59,7 @@ void loop() {
 
 void mueveMotor(int stepsToMove) {
   digitalWrite(dirPin, HIGH); //Definimos sentido
-  stepDelay=50;///definidmos velocidad
+  stepDelay=200;///definidmos velocidad
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);
@@ -60,7 +71,7 @@ void mueveMotor(int stepsToMove) {
 
 void mueveMotorB(int stepsToMove) {
   digitalWrite(dirPin, LOW);
-  stepDelay=50;
+  stepDelay=200;
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);
