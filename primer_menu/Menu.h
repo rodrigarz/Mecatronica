@@ -18,7 +18,9 @@ rotaryEncoder.encoderChanged()*/
 #define ROTARY_ENCODER_BUTTON_PIN 32  //antes 25
 #define ROTARY_ENCODER_VCC_PIN -1 /*put -1 of Rotary encoder Vcc is connected directly to 3,3V; else you can use declared output pin for powering rotary encoder antes 27 */
 
-
+typedef struct struct_message {
+    int posServo;
+} struct_message;
 
 int16_t leeEncoder();
 int8_t deltaEncoder();  // calcula el sentido giro encoder
