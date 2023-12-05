@@ -609,6 +609,7 @@ void menuPuertoSerial()
     }
     if(comando == "mmesa")
     {
+      data.indicacion = 3;
       data.gradosPaP = primero;
       data.velPap = segundo;
       lcd2.setCursor(0, 1);
@@ -626,6 +627,7 @@ void menuPuertoSerial()
       lcd2.print("mcintap");
     } else if (comando == "mexpulsor")
     {
+      data.indicacion = 2;
       data.posExpulsor = primero;
       lcd2.setCursor(0, 1);
       lcd2.print("mexpulsor");

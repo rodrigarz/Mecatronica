@@ -54,6 +54,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.print("Char: ");
   Serial.println(myData.posServo);
   Serial.println();
+  movimiento();
 }
 
 void movimiento()
@@ -78,6 +79,9 @@ void movimiento()
     case 4:
     posicionPasoPaso();
     myData.indicacion = 0;
+    break;
+
+    default:
     break;
   }
 }
@@ -176,7 +180,7 @@ void setup() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  movimiento();
+  //movimiento();
   
 
 }
