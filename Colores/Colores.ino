@@ -11,7 +11,6 @@ void setup() {
   // Inicializa el sensor de color
   if (!tcs.begin()) {
     Serial.println("Error al encontrar el sensor TCS34725. Conecta el sensor correctamente.");
-    while (1);
   }
 
   Serial.println("Sensor TCS34725 encontrado. Listo para detectar colores.");
@@ -37,7 +36,7 @@ void loop() {
     Serial.println("Rojo");
   } else if (greenRatio > colorThreshold) {
     Serial.println("Verde");
-  } else if (blueRatio > colorThreshold) {
+  } else if (blueRatio > colorThreshold+0.3) {
     Serial.println("Azul");
   } else {
     Serial.println("Vacio");
