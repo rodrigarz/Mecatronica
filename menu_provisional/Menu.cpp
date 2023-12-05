@@ -12,8 +12,8 @@ int lcdRows = 2;
 LiquidCrystal_I2C lcd1(DIRLCD1, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd2(DIRLCD2, lcdColumns, lcdRows);
 
-uint8_t placaServo[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
-
+//uint8_t placaServo[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
+uint8_t placaServo[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 
 struct struct_message data;

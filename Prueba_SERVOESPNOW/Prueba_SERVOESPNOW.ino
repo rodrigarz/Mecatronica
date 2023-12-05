@@ -15,8 +15,29 @@ typedef struct struct_message {
   int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap
   int posServo;
   int posExpulsor;
-  int pasosPap;
+  int gradosPaP;
+  int velPap;
+  int velCinta;
+  int incrCinta;
   int posPap;
+  int estado;
+	int control;
+	int estadoManual;
+	double setPoint;
+	double periodo;
+  double kPZMVel;
+  double kDZMVel;
+  double kIZMVel;
+  double kPVel;
+  double kDVel;
+  double kIVel;
+  double kPZMPos;
+  double kDZMPos;
+  double kIZMPos;
+  double kPPos;
+  double kDPos;
+  double kIPos;
+  byte eepromValidData;
 }struct_message;
 
 struct struct_message myData;
@@ -41,18 +62,22 @@ void movimiento()
   {
     case 1:
     posicionServo();
+    myData.indicacion = 0;
     break;
   
     case 2:
     posicionExpulsor();
+    myData.indicacion = 0;
     break;
 
     case 3:
     pasosPasoPaso();
+    myData.indicacion = 0;
     break;
 
     case 4:
     posicionPasoPaso();
+    myData.indicacion = 0;
     break;
   }
 }
@@ -83,7 +108,7 @@ void posicionExpulsor()
 
 void pasosPasoPaso()
 {
-  mueveMotor(myData.pasosPap);
+  mueveMotor(myData.gradosPaP*steps/360);
 }
 
 void posicionPasoPaso()
@@ -106,7 +131,7 @@ void posicionPasoPaso()
 
 void mueveMotor(int stepsToMove) {
   digitalWrite(dirPin, HIGH); //Definimos sentido
-  stepDelay=50;///definidmos velocidad
+  stepDelay=200;///definidmos velocidad
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);
@@ -118,7 +143,7 @@ void mueveMotor(int stepsToMove) {
 
 void mueveMotorB(int stepsToMove) {
   digitalWrite(dirPin, LOW);
-  stepDelay=50;
+  stepDelay=200;
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);

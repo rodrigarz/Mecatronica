@@ -4,7 +4,8 @@
 String stringEstado[] = {"Automatico", "Manual"};
 String stringControl[] = {"Vel", "Pos"};
 
-uint8_t placaServo2[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
+//uint8_t placaServo2[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
+uint8_t placaServo2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 esp_now_peer_info_t peerInfo;
 int posServo = 0;
