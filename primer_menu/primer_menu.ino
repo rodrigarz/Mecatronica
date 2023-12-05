@@ -5,6 +5,10 @@
 #include "WiFi.h"
 #include <esp_now.h>
 
+
+
+
+
 int encoderA = 23;
 int encoderB = 19;
 int boton_pulsado = 0;
