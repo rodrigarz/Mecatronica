@@ -19,7 +19,7 @@ typedef struct struct_message {
   int posServo;
   int posExpulsor;
   int gradosPaP;
-  int velPap;
+  double velPap;
   int velCinta;
   int incrCinta;
   int posPap;

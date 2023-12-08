@@ -50,4 +50,6 @@ void menuManualEncoder();
 void menuMoverCinta();
 void menuPuertoSerial();
 
+int splitString(String input, char delimiter, String parts[]);
+
 #endif

@@ -1,6 +1,7 @@
 #include "WiFi.h"
 #include <esp_now.h>
 #include <Servo.h>
+#include <iostream>
 
 const int dirPin = 5;
 const int stepPin = 15;
@@ -16,7 +17,7 @@ typedef struct struct_message {
   int posServo;
   int posExpulsor;
   int gradosPaP;
-  int velPap;
+  double velPap;
   int velCinta;
   int incrCinta;
   int posPap;
@@ -112,7 +113,15 @@ void posicionExpulsor()
 
 void pasosPasoPaso()
 {
-  mueveMotor(myData.gradosPaP*steps/360);
+  if(myData.gradosPaP > 0)
+  {
+    mueveMotor(myData.gradosPaP*steps/360);
+  }
+  else
+  {
+    myData.gradosPaP = myData.gradosPaP*-1;
+    mueveMotorB(myData.gradosPaP*steps/360);
+  }
 }
 
 void posicionPasoPaso()
@@ -135,7 +144,7 @@ void posicionPasoPaso()
 
 void mueveMotor(int stepsToMove) {
   digitalWrite(dirPin, HIGH); //Definimos sentido
-  stepDelay=200;///definidmos velocidad
+  stepDelay=round((0.1125/myData.velPap)/2);///definidmos velocidad
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);
@@ -147,7 +156,7 @@ void mueveMotor(int stepsToMove) {
 
 void mueveMotorB(int stepsToMove) {
   digitalWrite(dirPin, LOW);
-  stepDelay=200;
+  stepDelay=round((0.1125/myData.velPap)/2);
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);

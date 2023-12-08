@@ -530,6 +530,7 @@ void menuManualEncoder()
     case 3:
     data.gradosPaP = dameValorInt(menu[index], data.gradosPaP, 5, -1000, 1000);
     data.indicacion = 3;
+    data.velPap = 281.25;
     mandarDatos();
     break;
     case 4:
@@ -571,8 +572,13 @@ void menuMoverCinta()
 void menuPuertoSerial()
 {
   String comando, entrada;
+  String mmesa = "mmesa";
+  String mexpulsor = "mexpulsor";
+  String mcintav = "mcintav";
+  String mcintap = "mcintap";
   double primero, segundo;
   int salir = 0;
+  bool mandar = true;
 
   lcd1.clear();
   lcd2.clear();
@@ -587,52 +593,58 @@ void menuPuertoSerial()
     if(Serial.available() != 0)
     {
       String entrada = Serial.readStringUntil('\n');
-      if(sscanf(entrada.c_str(), "%s %lf %lf", comando, &primero, &segundo) == 3)
+      String partes[3];
+      int numPartes = splitString(entrada, ' ', partes);
+      if(numPartes == 3)
       {
         lcd2.setCursor(0, 0);
         lcd2.print("Recibido:");
         lcd2.setCursor(0, 1);
+        comando = partes[0];
+        primero = partes[1].toInt();
+        segundo = partes[2].toDouble();
         lcd2.print(comando);
-      } else if(sscanf(entrada.c_str(), "%s %lf", comando, &primero) == 2)
+        mandar = true;
+      } else if(numPartes == 2)
       {
         lcd2.setCursor(0, 0);
         lcd2.print("Recibido:");
         lcd2.setCursor(0, 1);
+        comando = partes[0];
+        primero = partes[1].toInt();
         lcd2.print(String(comando));
+        mandar = true;
         
       } else{
         salir = 1;
         lcd2.setCursor(0, 0);
         lcd2.print("Error al leer");
+        mandar = false;
       }
       
     }
-    if(comando == "mmesa")
+    if(comando == mmesa)
     {
       data.indicacion = 3;
       data.gradosPaP = primero;
       data.velPap = segundo;
-      lcd2.setCursor(0, 1);
-      lcd2.print("mmesa");
 
-    } else if(comando == "mcintav")
+    } else if(comando == mcintav)
     {
       data.velCinta = primero;
-      lcd2.setCursor(0, 1);
-      lcd2.print("mcintav");
-    } else if(comando == "mcintap")
+    } else if(comando == mcintap)
     {
       data.incrCinta = primero;
-      lcd2.setCursor(0, 1);
-      lcd2.print("mcintap");
-    } else if (comando == "mexpulsor")
+    } else if (comando == mexpulsor)
     {
       data.indicacion = 2;
       data.posExpulsor = primero;
-      lcd2.setCursor(0, 1);
-      lcd2.print("mexpulsor");
     }
-    mandarDatos();
+
+    if(mandar == true)
+    {
+      mandarDatos();
+    }
     delay(2000);
     lcd2.clear();
   } while (salir != 1);
@@ -648,4 +660,26 @@ void mandarDatos()
   else {
    Serial.println("Error sending the data");
   }
+}
+
+int splitString(String input, char delimiter, String parts[])
+ {
+  int partIndex = 0;
+  int startIndex = 0;
+  int endIndex = 0;
+
+  while (endIndex >= 0) {
+    endIndex = input.indexOf(delimiter, startIndex);
+
+    if (endIndex >= 0) {
+      parts[partIndex] = input.substring(startIndex, endIndex);
+    } else {
+      parts[partIndex] = input.substring(startIndex);
+    }
+
+    startIndex = endIndex + 1;
+    partIndex++;
+  }
+
+  return partIndex;
 }
