@@ -8,6 +8,8 @@ const int steps = 200 * 16;
 int stepDelay = 0;
 int posServo = 0;
 static const int servoPin = 19;
+const int encoderA = 23; //Morado
+const int encoderB = 22; //Azul
 
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap

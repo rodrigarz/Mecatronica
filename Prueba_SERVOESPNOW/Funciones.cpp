@@ -12,6 +12,15 @@ Servo servo1;
 String success;
 esp_now_peer_info_t peerInfo;
 
+ESP32Encoder myEnc;
+
+int test_limits = 2; // De rotary Encoder
+double Kp, Ki, Kd;
+double Setpoint, Input, Output;
+double velMotor;
+
+PID myPID(&Input, &Output, &Setpoint, myData.Kp, Ki, Kd, DIRECT);
+
 
 void movimiento()
 {
@@ -146,6 +155,29 @@ void inicializa()
     pinMode(EN, OUTPUT);
     digitalWrite(EN, LOW);
     servo1.attach(servoPin);
+
+    ESP32Encoder::useInternalWeakPullResistors = UP;
+    myEnc.attachHalfQuad(23, 19);
+    myEnc.setCount(0);
+    myEnc.clearCount();
+
+    setupMovement();                // Incializacion Pines Motor
+    myPID.SetSampleTime(100);
+
+    myPID.SetOutputLimits(-255, 255);
+    myPID.SetMode(AUTOMATIC);
+
+    escribeLcd(stringEstado[sys.estado], stringControl[sys.control] + ": " + stringEntrada[sys.entrada]);
+    if (sys.entrada == REFERENCIA) {
+        Setpoint = 0;
+
+        myEnc.clearCount();
+    }
+    else {
+        Setpoint = myData.setPoint;
+
+        myEnc.clearCount();
+    }
 }
 
 
