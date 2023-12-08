@@ -144,7 +144,7 @@ void posicionPasoPaso()
 
 void mueveMotor(int stepsToMove) {
   digitalWrite(dirPin, HIGH); //Definimos sentido
-  stepDelay=round((0.1125/myData.velPap)/2);///definidmos velocidad
+  stepDelay=round((0.1125*1000000)/(2*myData.velPap));///definidmos velocidad
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);
@@ -156,7 +156,7 @@ void mueveMotor(int stepsToMove) {
 
 void mueveMotorB(int stepsToMove) {
   digitalWrite(dirPin, LOW);
-  stepDelay=round((0.1125/myData.velPap)/2);
+  stepDelay=round((0.1125*1000000)/(2*myData.velPap));
 
   for (int x = 0; x < stepsToMove; x++) {
     digitalWrite(stepPin, HIGH);
