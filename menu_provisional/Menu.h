@@ -52,4 +52,7 @@ void menuPuertoSerial();
 
 int splitString(String input, char delimiter, String parts[]);
 
+void paroEmergencia();
+void marcha();
+
 #endif

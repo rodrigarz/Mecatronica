@@ -78,6 +78,7 @@ void inicializacion()
   inicializaLcd(lcd2);
   lcd1.backlight();
   lcd2.backlight();
+  data.estado = 0;
 }
 
 void inicializaLcd(LiquidCrystal_I2C &display)
@@ -281,7 +282,7 @@ void menuPrincipal()
 
 	do
 	{
-		if (data.estado == AUTOMATICO)
+		if (data.control == AUTOMATICO)
 		{
 			opDefecto[1] = "";
 			opDefecto[2] = "*";
@@ -297,10 +298,11 @@ void menuPrincipal()
 		{
 		case 1:
 			data.estado = MANUAL;
-      menuManual();
+			menuManual();
 			break;
 		case 2:
 			data.estado = AUTOMATICO;
+			mandarDatos();
 			break;
 		case 3:
 			menuAjustes();
@@ -318,13 +320,13 @@ void menuAjustes()
 
 	do
 	{
-		opDefecto[1] = (data.control == VELOCIDAD ? "Velocidad" : "Posicion");
+		opDefecto[1] = (data.controlCinta == VELOCIDAD ? "Velocidad" : "Posicion");
 		index = miMenu(menu, 3, opDefecto, index, lcd1);
 		
 		switch (index)
 		{
 		case 1:
-			data.control = (data.control == VELOCIDAD ? POSICION : VELOCIDAD);
+			data.controlCinta = (data.controlCinta == VELOCIDAD ? POSICION : VELOCIDAD);
 			break;
 		case 2:
 			menuParametros();
@@ -469,10 +471,11 @@ void menuKpos() {
 
 void menuManual()
 {
+	data.control = true;
 	String menu[] = { "Volver", "Manual Enc.", "Puerto Serial" };
 	int index = 0;
 	String opDefecto[3];
-  lcd2.clear();
+	lcd2.clear();
 
 	do
 	{
@@ -523,7 +526,7 @@ void menuManualEncoder()
     mandarDatos();
 		break;
     case 2:
-    data.posExpulsor = dameValorInt(menu[index], data.posExpulsor, 1, 0, 1);
+    data.posExpulsor = dameValorInt(menu[index], data.posExpulsor, 1, 0, 2);
     data.indicacion = 2;
     mandarDatos();
     break;
@@ -554,12 +557,12 @@ void menuMoverCinta()
   lcd2.clear();
   do
   {
-    opDefecto[1] = (data.control == VELOCIDAD ? "Velocidad":"Posicion");
+    opDefecto[1] = (data.controlCinta == VELOCIDAD ? "Velocidad":"Posicion");
     index = miMenu(menu, 3, opDefecto, index, lcd2);
     switch(index)
     {
       case 1:
-        data.control=(data.control==VELOCIDAD?POSICION:VELOCIDAD);
+        data.controlCinta=(data.controlCinta==VELOCIDAD?POSICION:VELOCIDAD);
         break;
       case 2:
         data.setPoint = dameValor(menu[index], data.setPoint, 10, -10000, 10000);
@@ -625,20 +628,22 @@ void menuPuertoSerial()
     }
     if(comando == mmesa)
     {
-      data.indicacion = 3;
-      data.gradosPaP = primero;
-      data.velPap = segundo;
+		data.indicacion = 3;
+		data.gradosPaP = primero;
+		data.velPap = segundo;
 
     } else if(comando == mcintav)
     {
-      data.velCinta = primero;
+		data.indicacion = 5;
+		data.velCinta = primero;
     } else if(comando == mcintap)
     {
-      data.incrCinta = primero;
+		data.indicacion = 6;
+		data.incrCinta = primero;
     } else if (comando == mexpulsor)
     {
-      data.indicacion = 2;
-      data.posExpulsor = primero;
+		data.indicacion = 2;
+		data.posExpulsor = primero;
     }
 
     if(mandar == true)
@@ -682,4 +687,16 @@ int splitString(String input, char delimiter, String parts[])
   }
 
   return partIndex;
+}
+
+void IRAM_ATTR paroEmergencia()
+{
+  data.estado = false;
+  mandarDatos();
+}
+
+void IRAM_ATTR marcha()
+{
+  data.estado = true;
+  mandarDatos();
 }

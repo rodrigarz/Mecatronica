@@ -13,7 +13,8 @@ int posExpulsor = 0;
 int pasosPap = 0;
 int posPap = 1;
 
-
+const int pinParo = 12;
+const int pinMarcha = 14;
 
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -25,10 +26,14 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
  // data.posServo = 0;
- 
+  pinMode(pinParo, INPUT_PULLDOWN);
+  pinMode(pinMarcha, INPUT_PULLDOWN);
   inicializacion();                  // Incialización del display
   settingsLoadFromEEprom();         // Carga valores de Eeprom
   inicializaRotaryEncoder();         //Incialización encoder rotativo HW-040 
+
+  attachInterrupt(pinParo, paroEmergencia, RISING);
+  attachInterrupt(pinMarcha, marcha, RISING);
 
   ESP32Encoder::useInternalWeakPullResistors=UP;
   escribeLcd(stringEstado[data.estado], stringControl[data.control]);

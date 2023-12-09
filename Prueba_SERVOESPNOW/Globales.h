@@ -20,8 +20,9 @@ typedef struct struct_message {
 	int velCinta; //Inidca velocidad para control cinta
 	int incrCinta; //Indica incremento de distancia para cinta
 	int posPap; //Indica posicion automatica de la mesa
-	int estado; // 0 = todo ok, 1 = emergencia activada
-	int control; //0 = modos manuales, 1 = modo automatico
+	bool estado; // TRUE = todo ok, FALSE = emergencia activada
+	bool control; //TRUE = modos manuales, FALSE = modo automatico
+	bool controlCinta; //TRUE = posicion, FALSE = velocidad
 	int estadoManual;
 	double setPoint;
 	double periodo;
