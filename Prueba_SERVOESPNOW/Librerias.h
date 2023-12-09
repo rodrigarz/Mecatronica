@@ -5,7 +5,6 @@
 #include<math.h>
 
 #include "Globales.h"
-//#include "analogWrite.h"
 #include "PID_v1.h"
 #include <ESP32Encoder.h>
 #include "Movement.h"
@@ -13,5 +12,8 @@
 #include "Menu.h"
 #include "WiFi.h"
 #include <esp_now.h>
+#include "Funciones.h"
+#include <iostream>
+#include "Servo.h"
 
 #endif

@@ -13,15 +13,15 @@ const int encoderB = 22; //Azul
 
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap, 5 = velCinta, 6 = posCinta
-	int posServo;
-	int posExpulsor;
-	int gradosPaP;
-	double velPap;
-	int velCinta;
-	int incrCinta;
-	int posPap;
-	int estado;
-	int control;
+	int posServo; //Ajusta por grados el servo
+	int posExpulsor; //1 = activar, 0 = desactivar, 2 = movimiento completo
+	int gradosPaP; //Indica grados movimiento mesa
+	double velPap; //Indica velocidad movmiento mesa
+	int velCinta; //Inidca velocidad para control cinta
+	int incrCinta; //Indica incremento de distancia para cinta
+	int posPap; //Indica posicion automatica de la mesa
+	int estado; // 0 = todo ok, 1 = emergencia activada
+	int control; //0 = modos manuales, 1 = modo automatico
 	int estadoManual;
 	double setPoint;
 	double periodo;

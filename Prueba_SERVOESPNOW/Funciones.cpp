@@ -1,11 +1,4 @@
 #include "Funciones.h"
-#include <Arduino.h>
-#include "Globales.h"
-#include "WiFi.h"
-#include "Servo.h"
-#include <esp_now.h>
-#include <iostream>
-
 
 struct struct_message myData;
 Servo servo1;
@@ -18,6 +11,7 @@ int test_limits = 2; // De rotary Encoder
 double Kp, Ki, Kd;
 double Setpoint, Input, Output;
 double velMotor;
+static int gradosActualMesa = 0;
 
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
@@ -78,15 +72,46 @@ void posicionExpulsor()
 {
     if (myData.posExpulsor == 1)
     {
-        servo1.write(180);
-        delay(200);
-        servo1.write(0);
-        myData.posExpulsor = 0;
+        //servo1.write(180);
+        for (int i = 0; i <= 180; i++)
+        {
+            servo1.write(i);
+            delay(50);
+        }
+    }
+    else if (myData.posExpulsor == 0)
+    {
+        //servo1.write(0);
+        for (int i = 180; i >= 0; i--)
+        {
+            servo1.write(i);
+            delay(50);
+        }
+    }
+    else if (myData.posExpulsor == 2)
+    {
+        //Para movimiento progresivo
+        for (int i = 0; i <= 180; i++)
+        {
+            servo1.write(i);
+            delay(50);
+        }
+        delay(1000);
+        for (int i = 180; i >= 0; i--)
+        {
+            servo1.write(i);
+            delay(50);
+        }
     }
 }
 
 void pasosPasoPaso()
 {
+    if (gradosActualMesa + myData.gradosPaP > 300)
+    {
+        Serial.println("No se puede mover la mesa mas distancia");
+        return;
+    }
     if (myData.gradosPaP > 0)
     {
         mueveMotor(myData.gradosPaP * steps / 360);
@@ -96,21 +121,40 @@ void pasosPasoPaso()
         myData.gradosPaP = myData.gradosPaP * -1;
         mueveMotorB(myData.gradosPaP * steps / 360);
     }
+    gradosActualMesa = gradosActualMesa + myData.gradosPaP;
 }
 
 void posicionPasoPaso()
 {
     if (myData.posPap == 1) {
+
+        if (gradosActualMesa + steps / 4 > 300)
+        {
+            Serial.println("No se puede mover la mesa mas distancia");
+            return;
+        }
         mueveMotor(steps / 4);
         delay(1000);
         mueveMotorB(steps / 4);
     }
     else if (myData.posPap == 2) {
+        
+        if (gradosActualMesa + steps / 2 > 300)
+        {
+            Serial.println("No se puede mover la mesa mas distancia");
+            return;
+        }
         mueveMotor(steps / 2);
         delay(1000);
         mueveMotorB(steps / 2);
     }
     else if (myData.posPap == 3) {
+
+        if (gradosActualMesa + steps * (3 / 4) > 300)
+        {
+            Serial.println("No se puede mover la mesa mas distancia");
+            return;
+        }
         mueveMotor(steps * 3 / 4);
         delay(1000);
         mueveMotorB(steps * 3 / 4);
@@ -187,7 +231,22 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     Serial.print("Char: ");
     Serial.println(myData.posServo);
     Serial.println();
-    movimiento();
+    if (myData.estado == 1)
+    {
+        Serial.println("Paro emergencia");
+        Motor(0);
+    }
+    else if (myData.estado == 0)
+    {
+        if (myData.control == 0)
+        {
+            movimiento();
+        }
+        else if (myData.control == 1)
+        {
+            plataAutomatica();
+        }
+    }
 }
 
 void controlVelocidad() {
