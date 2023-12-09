@@ -19,7 +19,7 @@ double Kp, Ki, Kd;
 double Setpoint, Input, Output;
 double velMotor;
 
-PID myPID(&Input, &Output, &Setpoint, myData.Kp, Ki, Kd, DIRECT);
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 
 void movimiento()
@@ -43,6 +43,16 @@ void movimiento()
 
     case 4:
         posicionPasoPaso();
+        myData.indicacion = 0;
+        break;
+
+    case 5:
+        controlVelocidad();
+        myData.indicacion = 0;
+        break;
+
+    case 6: 
+        controlPosicion();
         myData.indicacion = 0;
         break;
 
@@ -166,18 +176,7 @@ void inicializa()
 
     myPID.SetOutputLimits(-255, 255);
     myPID.SetMode(AUTOMATIC);
-
-    escribeLcd(stringEstado[sys.estado], stringControl[sys.control] + ": " + stringEntrada[sys.entrada]);
-    if (sys.entrada == REFERENCIA) {
-        Setpoint = 0;
-
-        myEnc.clearCount();
-    }
-    else {
-        Setpoint = myData.setPoint;
-
-        myEnc.clearCount();
-    }
+    Setpoint = 0;
 }
 
 
@@ -189,4 +188,134 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     Serial.println(myData.posServo);
     Serial.println();
     movimiento();
+}
+
+void controlVelocidad() {
+    unsigned long int t, dt = 100; // intervalo para el calculo de velocidad
+    float tiempo;
+    int8_t inc;
+    double Pos;
+
+    static double Pos_ant = myEnc.getCount();
+
+    //float periodo;
+    static unsigned long int tinicio = millis();
+    static unsigned long int t_ant = millis();  // Temporizador para calculo velocidad
+    static unsigned long int t_ant2 = millis();// Temporizador para calculo Periodo
+
+    // Calculo velocidad
+
+
+    t = millis();
+    if (t - t_ant > dt) {
+        //Pos = myEnc.read();
+        //Pos= myEnc.readEncoder();
+        Pos = myEnc.getCount();
+        Input = (double)1000 * (Pos - Pos_ant) / (t - t_ant);  // Calculo la velocidad
+        t_ant = t;
+        Pos_ant = Pos;
+    }
+
+    //Serial.println("Pos: "+String((int32_t)myEnc.getCount()))
+    Setpoint = myData.velCinta;
+    //if(Output<140 && Output>-140) {  // Las constantes son diferentes en la zona muerta
+    if (Setpoint - Input > 100 || Setpoint - Input < -100) {
+        Kp = myData.kPZMVel * 0.1; //0.1
+        Ki = myData.kIZMVel * 0.1; //0.9
+        Kd = myData.kDZMVel * 0.1; //0
+    }
+    else {
+        Kp = myData.kPVel * 0.1;// 0.01
+        Ki = myData.kIVel * 0.1; //0.2
+        Kd = myData.kDVel * 0.1; //0.2
+    }
+    myPID.SetTunings(Kp, Ki, Kd);
+    myPID.Compute();
+    velMotor = Output; //Cambiar signo si el motor gira solo en un sentido
+    Motor(velMotor);
+}
+
+void controlPosicion() {
+    float tiempo;
+    unsigned long int t, dt = 100; // intervalo para la visualiación valores
+    static unsigned long int tinicio = millis();  // Para calculo  funcion sinoidal
+    static unsigned long int t_ant = millis();  // Temporizador para calculo velocidad
+    static unsigned long int t_ant2 = millis();// Temporizador para calculo Periodo
+    //static int dir=1;
+
+	double incr = (myData.incrCinta / 0.3).toDouble();
+    t = millis();
+    Setpoint = move(incr, 1000, 800, 0.1); // cada pulso se multiplica *10 para cambios más rápidos
+
+    //Input = myEnc.read(); // Lee encoder del motor
+    //Input = myEnc.readEncoder();;
+    Input = myEnc.getCount();
+    if (Output<140 || Output>-140) {
+        Kp = myData.kPZMPos * 0.1; //3
+        Ki = myData.kIZMPos * 0.1; //0.05
+        Kd = myData.kDZMPos * 0.1; //0.0
+    }
+    else {
+        Kp = myData.kPPos * 0.1; //0.76
+        Ki = myData.kIPos * 0.1; //0.05
+        Kd = myData.kDPos * 0.1; //0.05
+    }
+    myPID.SetTunings(Kp, Ki, Kd);
+    myPID.Compute();
+
+    t_ant = t;
+
+    velMotor = Output; //Cambiar signo si el motor gira solo en un sentido 
+    Motor(velMotor);
+}
+  
+
+//xd define la posicion final a alcanzar, y vmax la velocidad maxima que alcanzará
+double  move(double xd, double vmax, double a, double dt) {
+    static unsigned long int t_ant = millis();
+
+    static double v, x, x_ant = myEnc.getCount();
+    unsigned long int t;
+    int sentido_giro;
+
+    x = myEnc.getCount();
+    t = millis();
+    if (t - t_ant > dt * 1000) {
+
+        t_ant = t;
+        sentido_giro = (xd - x > 0 ? 1 : -1);
+
+
+        if (abs(xd - x) > 2 * vmax * vmax * dt / a) {
+            //if(abs(xd-x) >500){
+            if (abs(v) < vmax) {      // Acelero
+                x = x + v * dt + 0.5 * a * dt * dt * sentido_giro;
+                v = v + a * dt * sentido_giro;
+                Serial.println("Acelero");
+            }
+            else {
+                v = vmax * sentido_giro;
+                x = x + v * dt;        // Vel constante
+                Serial.println("Vel constante");
+            }
+        }
+        else {                            // Decelero
+            x = x + v * dt - 0.5 * a * dt * dt * sentido_giro;
+            v = v - a * dt * sentido_giro;
+            if ((xd - x) * sentido_giro < 0) {
+                x = xd;    // Comprobamos no pasarnos  
+                v = 0;
+            }
+            Serial.println("Decelero");
+        }
+        Serial.print("xd:" + String(xd));
+        Serial.print(", ");
+        Serial.print("x:" + String(x));
+        Serial.print(", ");
+        Serial.print("Input:" + String((int32_t)myEnc.getCount()));
+        Serial.print(", ");
+        Serial.println("v:" + String(v));
+
+    }
+    return x;
 }

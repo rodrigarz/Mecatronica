@@ -1,11 +1,6 @@
 #ifndef FUNCIONES_H
 #define FUNCIONES_H
-#include <Arduino.h>
-#include <iostream>
-#include "WiFi.h"
-#include <esp_now.h>
-#include <ESP32Encoder.h>
-#include "PID_v1.h"
+#include "Librerias.h"
 
 void inicializa();
 void movimiento();
@@ -18,6 +13,6 @@ void mueveMotorB(int stepsToMove);
 void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len);
 void controlVelocidad();
 void controlPosicion();
-double  move(double xd, double vmax, double a, double dt);
+double move(double xd, double vmax, double a, double dt);
 
 #endif
