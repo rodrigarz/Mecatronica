@@ -12,6 +12,7 @@ double Kp, Ki, Kd;
 double Setpoint, Input, Output;
 double velMotor;
 int gradosActualMesa = 0;
+const int steps = 200*16;
 
 int stepDelay = 0;
 int posServo = 0;

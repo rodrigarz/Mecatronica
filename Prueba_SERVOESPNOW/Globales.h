@@ -4,7 +4,6 @@
 const int dirPin = 5;
 const int stepPin = 15;
 const int EN = 18;
-const int steps = 200 * 16;
 static const int servoPin = 12;
 const int encoderA = 23; //Morado
 const int encoderB = 22; //Azul

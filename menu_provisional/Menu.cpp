@@ -517,9 +517,9 @@ void menuManualEncoder()
   do
   {
    opDefecto[1] = String(data.posServo);
-   opDefecto[2] = String(data.posExpulsor);
+   //opDefecto[2] = String(data.posExpulsor);
    opDefecto[3] = String(data.gradosPaP);
-   opDefecto[4] = String(data.posPap);
+   //opDefecto[4] = String(data.posPap);
    index = miMenu(menu, 5, opDefecto, index, lcd2);
    switch(index)
    {
