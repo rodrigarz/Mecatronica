@@ -219,6 +219,8 @@ void inicializa()
     digitalWrite(EN, LOW);
     servo1.attach(servoPin);
 
+    pinMode(pinFinalCarrera, INPUT_PULLUP);
+
     ESP32Encoder::useInternalWeakPullResistors = UP;
     myEnc.attachHalfQuad(23, 19);
     myEnc.setCount(0);
@@ -231,6 +233,7 @@ void inicializa()
     myPID.SetMode(AUTOMATIC);
     Setpoint = 0;
     gradosActualMesa = 0;
+    buscaInicio();
 }
 
 
@@ -379,4 +382,12 @@ double  move(double xd, double vmax, double a, double dt) {
 
       }
       return x;
+}
+
+void buscaInicio()
+{
+  while(digitalRead(pinFinalCarrera) == 1)
+  {
+    mueveMotorB(stepInicial);
+  }
 }
