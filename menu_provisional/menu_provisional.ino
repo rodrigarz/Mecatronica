@@ -5,9 +5,11 @@ String stringEstado[] = {"Automatico", "Manual"};
 String stringControl[] = {"Vel", "Pos"};
 
 //uint8_t placaServo2[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
-uint8_t placaServo2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t placaServo2[] = {0x58, 0xBF, 0x25, 0x81, 0x79, 0xF4};
+uint8_t placaControl[] = {0x10, 0x91, 0xA8, 0x19, 0xC8, 0xF4};
 
 esp_now_peer_info_t peerInfo;
+esp_now_peer_info_t peerInfo2;
 int posServo = 0;
 int posExpulsor = 0;
 int pasosPap = 0;
@@ -51,11 +53,19 @@ void setup() {
   
   // Register peer
   memcpy(peerInfo.peer_addr, placaServo2, 6);
+  memcpy(peerInfo2.peer_addr, placaControl, 6);
   peerInfo.channel = 0;  
   peerInfo.encrypt = false;
+  peerInfo2.channel = 1;
+  peerInfo2.encrypt = false;
 
    if (esp_now_add_peer(&peerInfo) != ESP_OK){
-    Serial.println("Failed to add peer");
+    Serial.println("Failed to add peer servo");
+    return;
+  }
+
+  if (esp_now_add_peer(&peerInfo2) != ESP_OK){
+    Serial.println("Failed to add peer control");
     return;
   }
 }

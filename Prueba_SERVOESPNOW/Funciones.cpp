@@ -16,8 +16,6 @@ int gradosActualMesa = 0;
 int stepDelay = 0;
 int posServo = 0;
 
-extern volatile bool interrupcion = false;
-
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 
@@ -71,7 +69,7 @@ void posicionServo()
     {
         Serial.println(servoPosition);
     }
-    esperaMillis(200);
+    delay(200);
 }
 
 void posicionExpulsor()
@@ -82,7 +80,7 @@ void posicionExpulsor()
         for (int i = 0; i <= 180; i++)
         {
             servo1.write(i);
-            esperaMillis(20);
+            delay(30);
         }
     }
     else if (myData.posExpulsor == 0)
@@ -91,7 +89,7 @@ void posicionExpulsor()
         for (int i = 180; i >= 0; i--)
         {
             servo1.write(i);
-            esperaMillis(20);
+            delay(30);
         }
     }
     else if (myData.posExpulsor == 2)
@@ -100,15 +98,15 @@ void posicionExpulsor()
         for (int i = 0; i <= 180; i++)
         {
             servo1.write(i);
-            esperaMillis(20);
+            delay(30);
         }
 
-        esperaMillis(1000);
+        delay(1000);
 
         for (int i = 180; i >= 0; i--)
         {
             servo1.write(i);
-            esperaMillis(20);
+            delay(30);
         }
     }
 }
@@ -144,7 +142,7 @@ void posicionPasoPaso()
             return;
         }
         mueveMotor(steps / 4);
-        esperaMillis(1000);
+        delay(1000);
         mueveMotorB(steps / 4);
     }
     else if (myData.posPap == 2) {
@@ -155,7 +153,7 @@ void posicionPasoPaso()
             return;
         }
         mueveMotor(steps / 2);
-        esperaMillis(1000);
+        delay(1000);
         mueveMotorB(steps / 2);
     }
     else if (myData.posPap == 3) {
@@ -166,7 +164,7 @@ void posicionPasoPaso()
             return;
         }
         mueveMotor(steps * 3 / 4);
-        esperaMillis(1000);
+        delay(1000);
         mueveMotorB(steps * 3 / 4);
     }
 }
@@ -242,22 +240,13 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     Serial.print("Char: ");
     Serial.println(myData.posServo);
     Serial.println();
-    if (myData.estado == false)
+    if (myData.control == true)
     {
-        interrupcion = true;
-        Serial.println("Paro emergencia");
-        Motor(0);
+      movimiento();
     }
-    else if (myData.estado == true)
+    else if (myData.control == false)
     {
-        if (myData.control == true)
-        {
-            movimiento();
-        }
-        else if (myData.control == false)
-        {
-            //plantaAutomatica();
-        }
+      //plantaAutomatica();
     }
 }
 
@@ -389,23 +378,4 @@ double  move(double xd, double vmax, double a, double dt) {
 
       }
       return x;
-}
-
-void esperaMillis(unsigned long tiempo)
-{
-  static unsigned long tiempoInicio = 0;
-  if(tiempoInicio == 0)
-  {
-    tiempoInicio = millis();
-  }
-
-  if(millis() - tiempoInicio >= tiempo)
-  {
-    tiempoInicio = 0;
-  }
-}
-
-bool devuelveInter()
-{
-  return interrupcion;
 }

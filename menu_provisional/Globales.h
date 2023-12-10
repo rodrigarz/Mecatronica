@@ -45,7 +45,12 @@ typedef struct struct_message {
 } struct_message;
 
 
+typedef struct mensaje_control{
+  bool emergencia;
+}mensaje_control;
+
 extern struct_message data;
+extern mensaje_control mensaje;
 
 extern String stringEstado[];
 extern String stringControl[];

@@ -13,10 +13,13 @@ LiquidCrystal_I2C lcd1(DIRLCD1, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd2(DIRLCD2, lcdColumns, lcdRows);
 
 //uint8_t placaServo[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
-uint8_t placaServo[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+//uint8_t placaServo[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t placaServo[] = {0x58, 0xBF, 0x25, 0x81, 0x79, 0xF4};
+uint8_t placaControl2[] = {0x10, 0x91, 0xA8, 0x19, 0xC8, 0xF4};
 
 
 struct struct_message data;
+struct mensaje_control mensaje;
 
 byte downArrow[8] = {
   0b00100, //   *
@@ -691,12 +694,26 @@ int splitString(String input, char delimiter, String parts[])
 
 void IRAM_ATTR paroEmergencia()
 {
-  data.estado = false;
-  mandarDatos();
+  mensaje.emergencia = true;
+  esp_err_t result = esp_now_send(placaControl2, (uint8_t *) &mensaje, sizeof(mensaje));
+
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+   Serial.println("Error sending the data");
+  }
 }
 
 void IRAM_ATTR marcha()
 {
-  data.estado = true;
-  mandarDatos();
+  mensaje.emergencia = false;
+  esp_err_t result = esp_now_send(placaControl2, (uint8_t *) &mensaje, sizeof(mensaje));
+
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+   Serial.println("Error sending the data");
+  }
 }

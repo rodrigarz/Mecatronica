@@ -16,8 +16,5 @@ void controlPosicion();
 double move(double xd, double vmax, double a, double dt);
 //void plantaAutomatica();
 
-void esperaMillis(unsigned long tiempo);
-
-bool devuelveInter();
 
 #endif
