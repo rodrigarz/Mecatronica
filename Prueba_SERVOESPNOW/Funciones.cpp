@@ -11,7 +11,12 @@ int test_limits = 2; // De rotary Encoder
 double Kp, Ki, Kd;
 double Setpoint, Input, Output;
 double velMotor;
-static int gradosActualMesa = 0;
+int gradosActualMesa = 0;
+
+int stepDelay = 0;
+int posServo = 0;
+
+extern volatile bool interrupcion = false;
 
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
@@ -57,26 +62,27 @@ void movimiento()
 
 void posicionServo()
 {
+  Serial.println("Entro");
     int servoPosAnt = 0;
     int servoPosition = map(myData.posServo, 0, 180, 0, 180);
     servoPosAnt = servoPosition;
-    servo1.write(servoPosition);
+    servo1.write(myData.posServo);
     if (servoPosAnt != servoPosition)
     {
         Serial.println(servoPosition);
     }
-    delay(100);
+    esperaMillis(200);
 }
 
 void posicionExpulsor()
-{
+{   
     if (myData.posExpulsor == 1)
     {
         //servo1.write(180);
         for (int i = 0; i <= 180; i++)
         {
             servo1.write(i);
-            delay(50);
+            esperaMillis(20);
         }
     }
     else if (myData.posExpulsor == 0)
@@ -85,7 +91,7 @@ void posicionExpulsor()
         for (int i = 180; i >= 0; i--)
         {
             servo1.write(i);
-            delay(50);
+            esperaMillis(20);
         }
     }
     else if (myData.posExpulsor == 2)
@@ -94,24 +100,29 @@ void posicionExpulsor()
         for (int i = 0; i <= 180; i++)
         {
             servo1.write(i);
-            delay(50);
+            esperaMillis(20);
         }
-        delay(1000);
+
+        esperaMillis(1000);
+
         for (int i = 180; i >= 0; i--)
         {
             servo1.write(i);
-            delay(50);
+            esperaMillis(20);
         }
     }
 }
 
 void pasosPasoPaso()
 {
-    if (gradosActualMesa + myData.gradosPaP > 300)
+    if (gradosActualMesa + myData.gradosPaP > 300 || gradosActualMesa + myData.gradosPaP < -300)
     {
         Serial.println("No se puede mover la mesa mas distancia");
         return;
     }
+
+    gradosActualMesa = gradosActualMesa + myData.gradosPaP;
+
     if (myData.gradosPaP > 0)
     {
         mueveMotor(myData.gradosPaP * steps / 360);
@@ -120,43 +131,42 @@ void pasosPasoPaso()
     {
         myData.gradosPaP = myData.gradosPaP * -1;
         mueveMotorB(myData.gradosPaP * steps / 360);
-    }
-    gradosActualMesa = gradosActualMesa + myData.gradosPaP;
+    } 
 }
 
 void posicionPasoPaso()
 {
     if (myData.posPap == 1) {
 
-        if (gradosActualMesa + steps / 4 > 300)
+        if (gradosActualMesa + (steps / 4)/8.89 > 300)
         {
             Serial.println("No se puede mover la mesa mas distancia");
             return;
         }
         mueveMotor(steps / 4);
-        delay(1000);
+        esperaMillis(1000);
         mueveMotorB(steps / 4);
     }
     else if (myData.posPap == 2) {
         
-        if (gradosActualMesa + steps / 2 > 300)
+        if (gradosActualMesa + (steps / 2)/8.89 > 300)
         {
             Serial.println("No se puede mover la mesa mas distancia");
             return;
         }
         mueveMotor(steps / 2);
-        delay(1000);
+        esperaMillis(1000);
         mueveMotorB(steps / 2);
     }
     else if (myData.posPap == 3) {
 
-        if (gradosActualMesa + steps * (3 / 4) > 300)
+        if (gradosActualMesa + (steps * (3 / 4))/8.89 > 300)
         {
             Serial.println("No se puede mover la mesa mas distancia");
             return;
         }
         mueveMotor(steps * 3 / 4);
-        delay(1000);
+        esperaMillis(1000);
         mueveMotorB(steps * 3 / 4);
     }
 }
@@ -221,6 +231,7 @@ void inicializa()
     myPID.SetOutputLimits(-255, 255);
     myPID.SetMode(AUTOMATIC);
     Setpoint = 0;
+    gradosActualMesa = 0;
 }
 
 
@@ -231,20 +242,21 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     Serial.print("Char: ");
     Serial.println(myData.posServo);
     Serial.println();
-    if (myData.estado == 1)
+    if (myData.estado == false)
     {
+        interrupcion = true;
         Serial.println("Paro emergencia");
         Motor(0);
     }
-    else if (myData.estado == 0)
+    else if (myData.estado == true)
     {
-        if (myData.control == 0)
+        if (myData.control == true)
         {
             movimiento();
         }
-        else if (myData.control == 1)
+        else if (myData.control == false)
         {
-            plataAutomatica();
+            //plantaAutomatica();
         }
     }
 }
@@ -296,15 +308,15 @@ void controlVelocidad() {
 
 void controlPosicion() {
     float tiempo;
-    unsigned long int t, dt = 100; // intervalo para la visualiación valores
+    unsigned long int t, dt = 100; // intervalo para la visualiaciï¿½n valores
     static unsigned long int tinicio = millis();  // Para calculo  funcion sinoidal
     static unsigned long int t_ant = millis();  // Temporizador para calculo velocidad
     static unsigned long int t_ant2 = millis();// Temporizador para calculo Periodo
     //static int dir=1;
 
-	double incr = (myData.incrCinta / 0.3).toDouble();
+	double incr = (myData.incrCinta / 0.3);
     t = millis();
-    Setpoint = move(incr, 1000, 800, 0.1); // cada pulso se multiplica *10 para cambios más rápidos
+    Setpoint = move(incr, 1000, 800, 0.1); // cada pulso se multiplica *10 para cambios mï¿½s rï¿½pidos
 
     //Input = myEnc.read(); // Lee encoder del motor
     //Input = myEnc.readEncoder();;
@@ -329,7 +341,7 @@ void controlPosicion() {
 }
   
 
-//xd define la posicion final a alcanzar, y vmax la velocidad maxima que alcanzará
+//xd define la posicion final a alcanzar, y vmax la velocidad maxima que alcanzarï¿½
 double  move(double xd, double vmax, double a, double dt) {
     static unsigned long int t_ant = millis();
 
@@ -375,6 +387,25 @@ double  move(double xd, double vmax, double a, double dt) {
         Serial.print(", ");
         Serial.println("v:" + String(v));
 
-    }
-    return x;
+      }
+      return x;
+}
+
+void esperaMillis(unsigned long tiempo)
+{
+  static unsigned long tiempoInicio = 0;
+  if(tiempoInicio == 0)
+  {
+    tiempoInicio = millis();
+  }
+
+  if(millis() - tiempoInicio >= tiempo)
+  {
+    tiempoInicio = 0;
+  }
+}
+
+bool devuelveInter()
+{
+  return interrupcion;
 }
