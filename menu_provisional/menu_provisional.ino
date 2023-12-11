@@ -50,8 +50,8 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
  // data.posServo = 0;
-  pinMode(pinParo, INPUT_PULLDOWN);
-  pinMode(pinMarcha, INPUT_PULLDOWN);
+  pinMode(pinParo, INPUT_PULLUP);
+  pinMode(pinMarcha, INPUT_PULLUP);
   inicializacion();                  // Incialización del display
   settingsLoadFromEEprom();         // Carga valores de Eeprom
   inicializaRotaryEncoder();         //Incialización encoder rotativo HW-040 

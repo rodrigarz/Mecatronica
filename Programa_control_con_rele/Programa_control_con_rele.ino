@@ -1,7 +1,8 @@
 #include "WiFi.h"
 #include <esp_now.h>
 
-const int relayPin = 4;
+const int relayPin = 8;
+const int pinLed = 3;
 
 typedef struct struct_message{
   bool emergencia;
@@ -13,6 +14,18 @@ static bool variable = false;
 
 const unsigned long tiempoMaximo = 6000;
 unsigned long tiempoAnterior = 0;
+unsigned long lastMillis = 0;
+
+void cambiarColorRojo() {
+  if(miMensaje.emergencia == true)
+  {
+    digitalWrite(pinLed, !digitalRead(pinLed));
+  }
+  else
+  {
+    digitalWrite(pinLed, LOW);
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -32,6 +45,7 @@ void setup() {
 
     esp_now_register_recv_cb(OnDataRecv);
     pinMode(relayPin, OUTPUT);
+    pinMode(pinLed, OUTPUT);
     //miMensaje.emergencia = false;
 
 }
@@ -58,6 +72,17 @@ void loop() {
   if(tiempoActual - tiempoAnterior >= tiempoMaximo)
   {
     digitalWrite(relayPin, LOW);
+    miMensaje.emergencia = true;
     tiempoAnterior = tiempoActual;
+  }
+
+  if(miMensaje.emergencia == true)
+  {
+    if (millis() - lastMillis >= 500) {
+      cambiarColorRojo();
+      lastMillis = millis();  // Actualiza el tiempo del último cambio
+    }
+  } else{
+    digitalWrite(pinLed, HIGH);
   }
 }
