@@ -692,28 +692,3 @@ int splitString(String input, char delimiter, String parts[])
   return partIndex;
 }
 
-void IRAM_ATTR paroEmergencia()
-{
-  mensaje.emergencia = true;
-  esp_err_t result = esp_now_send(placaControl2, (uint8_t *) &mensaje, sizeof(mensaje));
-
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-   Serial.println("Error sending the data");
-  }
-}
-
-void IRAM_ATTR marcha()
-{
-  mensaje.emergencia = false;
-  esp_err_t result = esp_now_send(placaControl2, (uint8_t *) &mensaje, sizeof(mensaje));
-
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-   Serial.println("Error sending the data");
-  }
-}

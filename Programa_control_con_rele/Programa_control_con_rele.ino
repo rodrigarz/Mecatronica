@@ -11,6 +11,9 @@ struct struct_message miMensaje;
 
 static bool variable = false;
 
+const unsigned long tiempoMaximo = 6000;
+unsigned long tiempoAnterior = 0;
+
 void setup() {
   // put your setup code here, to run once:
     Serial.begin(115200);
@@ -37,6 +40,7 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len){
   memcpy(&miMensaje, incomingData, sizeof(miMensaje));
   variable = miMensaje.emergencia;
   Serial.println("Recibido");
+  tiempoAnterior = millis();
   if(miMensaje.emergencia == false)
   {
     digitalWrite(relayPin, HIGH);
@@ -50,4 +54,10 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len){
 
 void loop() {
   // put your main code here, to run repeatedly:
+  unsigned long tiempoActual = millis();
+  if(tiempoActual - tiempoAnterior >= tiempoMaximo)
+  {
+    digitalWrite(relayPin, LOW);
+    tiempoAnterior = tiempoActual;
+  }
 }

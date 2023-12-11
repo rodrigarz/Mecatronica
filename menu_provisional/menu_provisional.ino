@@ -15,13 +15,35 @@ int posExpulsor = 0;
 int pasosPap = 0;
 int posPap = 1;
 
+hw_timer_t * timer = NULL;
+
 const int pinParo = 12;
 const int pinMarcha = 14;
+
+struct mensaje_control miMensaje;
 
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+}
+
+
+void IRAM_ATTR onTimer()
+{
+  esp_now_send(placaControl, (uint8_t *) &miMensaje, sizeof(miMensaje));
+}
+
+void IRAM_ATTR paroEmergencia()
+{
+  miMensaje.emergencia = true;
+  esp_now_send(placaControl, (uint8_t *) &miMensaje, sizeof(miMensaje));
+}
+
+void IRAM_ATTR marcha()
+{
+  miMensaje.emergencia = false;
+  esp_now_send(placaControl, (uint8_t *) &miMensaje, sizeof(miMensaje));
 }
 
 void setup() {
@@ -68,6 +90,11 @@ void setup() {
     Serial.println("Failed to add peer control");
     return;
   }
+
+  timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer, &onTimer, true);
+  timerAlarmWrite(timer, 5000000, true);
+  timerAlarmEnable(timer);
 }
 
 void loop() {
@@ -77,3 +104,5 @@ void loop() {
     menuPrincipal();
   }
 }
+
+
