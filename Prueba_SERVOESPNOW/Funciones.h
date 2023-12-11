@@ -5,9 +5,9 @@
 void inicializa();
 void movimiento();
 void posicionServo();
-void posicionExpulsor();
+void posicionExpulsor(int modoActiva);
 void pasosPasoPaso();
-void posicionPasoPaso();
+void posicionPasoPaso(int posicion, bool modoAuto);
 void mueveMotor(int stepsToMove);
 void mueveMotorB(int stepsToMove);
 void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len);

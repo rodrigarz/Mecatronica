@@ -30,7 +30,7 @@ void movimiento()
         break;
 
     case 2:
-        posicionExpulsor();
+        posicionExpulsor(myData.posExpulsor);
         myData.indicacion = 0;
         break;
 
@@ -40,7 +40,7 @@ void movimiento()
         break;
 
     case 4:
-        posicionPasoPaso();
+        posicionPasoPaso(myData.posPap, false);
         myData.indicacion = 0;
         break;
 
@@ -73,9 +73,9 @@ void posicionServo()
     delay(200);
 }
 
-void posicionExpulsor()
+void posicionExpulsor(int modoActiva)
 {   
-    if (myData.posExpulsor == 1)
+    if (modoActiva == 1)
     {
         //servo1.write(180);
         for (int i = 0; i <= 180; i++)
@@ -84,7 +84,7 @@ void posicionExpulsor()
             delay(30);
         }
     }
-    else if (myData.posExpulsor == 0)
+    else if (modoActiva == 0)
     {
         //servo1.write(0);
         for (int i = 180; i >= 0; i--)
@@ -93,7 +93,7 @@ void posicionExpulsor()
             delay(30);
         }
     }
-    else if (myData.posExpulsor == 2)
+    else if (modoActiva == 2)
     {
         //Para movimiento progresivo
         for (int i = 0; i <= 180; i++)
@@ -133,9 +133,9 @@ void pasosPasoPaso()
     } 
 }
 
-void posicionPasoPaso()
+void posicionPasoPaso(int posicion, bool modoAuto)
 {
-    if (myData.posPap == 1) {
+    if (posicion == 1) {
 
         if (gradosActualMesa + (steps / 4)/8.89 > 300)
         {
@@ -143,10 +143,14 @@ void posicionPasoPaso()
             return;
         }
         mueveMotor(steps / 4);
+        if (modoAuto)
+        {
+            posicionExpulsor(2);
+        }
         delay(1000);
         mueveMotorB(steps / 4);
     }
-    else if (myData.posPap == 2) {
+    else if (posicion == 2) {
         
         if (gradosActualMesa + (steps / 2)/8.89 > 300)
         {
@@ -154,10 +158,14 @@ void posicionPasoPaso()
             return;
         }
         mueveMotor(steps / 2);
+        if (modoAuto)
+        {
+            posicionExpulsor(2);
+        }
         delay(1000);
         mueveMotorB(steps / 2);
     }
-    else if (myData.posPap == 3) {
+    else if (posicion == 3) {
 
         if (gradosActualMesa + (steps * (3 / 4))/8.89 > 300)
         {
@@ -165,6 +173,10 @@ void posicionPasoPaso()
             return;
         }
         mueveMotor(steps * 3 / 4);
+        if (modoAuto)
+        {
+            posicionExpulsor(2);
+        }
         delay(1000);
         mueveMotorB(steps * 3 / 4);
     }
@@ -225,6 +237,8 @@ void inicializa()
     myEnc.attachHalfQuad(23, 19);
     myEnc.setCount(0);
     myEnc.clearCount();
+
+    pinMode(sensorIR, INPUT);
 
     setupMovement();                // Incializacion Pines Motor
     myPID.SetSampleTime(100);

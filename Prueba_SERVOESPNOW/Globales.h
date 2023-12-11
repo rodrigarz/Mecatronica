@@ -9,6 +9,7 @@ const int encoderA = 23; //Morado
 const int encoderB = 22; //Azul
 const int pinFinalCarrera = 19;
 const int stepInicial = 2;
+const int sensorIR = 9;
 
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap, 5 = velCinta, 6 = posCinta
