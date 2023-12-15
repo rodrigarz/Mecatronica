@@ -14,7 +14,7 @@ LiquidCrystal_I2C lcd2(DIRLCD2, lcdColumns, lcdRows);
 
 //uint8_t placaServo[] = {0x80, 0x7D, 0x3A, 0xFD, 0x0D, 0x50}; //Direccion placa rodrigo (la de mas pines)
 //uint8_t placaServo[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-uint8_t placaServo[] = {0x58, 0xBF, 0x25, 0x81, 0x79, 0xF4};
+uint8_t placaServo[] = {0xB4, 0xE6, 0x2D, 0xFB, 0x1B, 0xBD};
 uint8_t placaControl2[] = {0x10, 0x91, 0xA8, 0x19, 0xC8, 0xF4};
 
 
@@ -520,7 +520,7 @@ void menuManualEncoder()
    //opDefecto[2] = String(data.posExpulsor);
    opDefecto[3] = String(data.gradosPaP);
    //opDefecto[4] = String(data.posPap);
-   index = miMenu(menu, 5, opDefecto, index, lcd2);
+   index = miMenu(menu, 6, opDefecto, index, lcd2);
    switch(index)
    {
     case 1:
@@ -566,6 +566,14 @@ void menuMoverCinta()
     {
       case 1:
         data.controlCinta=(data.controlCinta==VELOCIDAD?POSICION:VELOCIDAD);
+        if(data.controlCinta == false)
+        {
+          data.indicacion=5;
+        }
+        else
+        {
+          data.indicacion=6;
+        }
         break;
       case 2:
         data.setPoint = dameValor(menu[index], data.setPoint, 10, -10000, 10000);

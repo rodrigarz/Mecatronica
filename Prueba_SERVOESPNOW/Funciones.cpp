@@ -264,7 +264,7 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     }
     else if (myData.control == false)
     {
-      //plantaAutomatica();
+      plantaAutomatica();
     }
 }
 

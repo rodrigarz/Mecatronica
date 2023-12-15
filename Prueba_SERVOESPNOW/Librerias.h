@@ -14,5 +14,6 @@
 #include "Funciones.h"
 #include <iostream>
 #include "Servo.h"
+#include "Automatico.h"
 
 #endif
