@@ -36,7 +36,7 @@ void loop() {
     Serial.println("Rojo");
   } else if (greenRatio > colorThreshold) {
     Serial.println("Verde");
-  } else if (blueRatio > colorThreshold+0.3) {
+  } else if (blueRatio > colorThreshold) {
     Serial.println("Azul");
   } else {
     Serial.println("Vacio");
