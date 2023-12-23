@@ -51,13 +51,19 @@ void movimiento()
 
     case 5:
         movMotorDC = 2;
-        controlVelocidad();
+        do{
+          controlVelocidad();
+          vTaskDelay(1);
+        }while(myData.indicacion == 5);
         myData.indicacion = 0;
         break;
 
     case 6: 
         movMotorDC = 1;
-        controlPosicion();
+        do{
+          controlPosicion();
+          vTaskDelay(1);
+        }while(myData.indicacion == 6);
         myData.indicacion = 0;
         break;
 
@@ -283,7 +289,6 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
 }
 
 void controlVelocidad() {
-  do{
     unsigned long int t, dt=50; // intervalo para el calculo de velocidad
     float tiempo;
     int8_t inc;
@@ -347,7 +352,6 @@ void controlVelocidad() {
       Motor(salida);
       tinicio = t;
     }
-  while(movMotorDC == 1)
 }
 
 void controlPosicion() {
