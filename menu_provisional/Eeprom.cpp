@@ -33,10 +33,10 @@ void settingsReset() {
   data.setPoint = 500;
   data.kPZMPos = 2;
   data.kDZMPos = 0;
-  data.kIZMPos = 0.15;
-  data.kPPos = 0.3;
-  data.kDPos = 0;
-  data.kIPos = 0.05;
+  data.kIZMPos = 1;
+  data.kPPos = 0.5;
+  data.kDPos = 0.05;
+  data.kIPos = 0.2;
   //data.eepromValidData=54; //Un número definido cualquiera
 }
 

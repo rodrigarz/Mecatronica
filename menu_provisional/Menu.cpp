@@ -519,8 +519,14 @@ void menuMoverCinta()
     index = miMenu(menu, 3, opDefecto, index, lcd2);
     switch(index)
     {
+      case 0:
+        data.indicacion = 0;
+        mandarDatos();
       case 1:
         data.controlCinta=(data.controlCinta==VELOCIDAD?POSICION:VELOCIDAD);
+        break;
+      case 2:
+        data.setPoint = dameValor(menu[index], data.setPoint, 10, -1000, 1000);
         if(data.controlCinta == false)
         {
           data.indicacion=5;
@@ -529,9 +535,6 @@ void menuMoverCinta()
         {
           data.indicacion=6;
         }
-        break;
-      case 2:
-        data.setPoint = dameValor(menu[index], data.setPoint, 10, -1000, 1000);
         mandarDatos();
         break;
     }
@@ -602,12 +605,14 @@ void menuPuertoSerial()
 
     } else if(comando == mcintav)
     {
-		data.indicacion = 5;
-		data.velCinta = primero;
+		  data.indicacion = 5;
+		  data.velCinta = primero;
+      data.setPoint = data.velCinta*19;
     } else if(comando == mcintap)
     {
-		data.indicacion = 6;
-		data.incrCinta = primero;
+		  data.indicacion = 6;
+		  data.incrCinta = primero;
+      data.setPoint = data.incrCinta*19;
     } else if (comando == mexpulsor)
     {
 		data.indicacion = 2;

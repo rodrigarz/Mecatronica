@@ -1,6 +1,9 @@
 #ifndef FUNCIONES_H
 #define FUNCIONES_H
 #include "Librerias.h"
+  #ifndef GLOBALES_H
+    #include "Globales.h"
+  #endif
 
 void inicializa();
 void movimiento();
@@ -16,5 +19,7 @@ void controlPosicion();
 double move(double xd, double vmax, double a, double dt);
 //void plantaAutomatica();
 void buscaInicio();
+extern int movMotorDC;
+extern bool entraMovimiento;
 
 #endif

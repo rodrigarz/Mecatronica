@@ -17,6 +17,8 @@ const int steps = 200*16;
 int stepDelay = 0;
 int posServo = 0;
 int salida;
+int movMotorDC = 0;
+extern bool entraMovimiento = false;
 
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
@@ -69,8 +71,10 @@ void movimiento()
 
     default:
         movMotorDC = 0;
+        Motor(0);
         break;
     }
+    delay(50);
 }
 
 void posicionServo()
@@ -280,7 +284,7 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     Setpoint = myData.setPoint;
     if (myData.control == true)
     {
-      movimiento();
+      entraMovimiento = true;
     }
     else if (myData.control == false)
     {
@@ -366,12 +370,12 @@ void controlPosicion() {
   Input = myEnc.getCount();
   if (Output < 140 || Output > -140) {
     Kp = myData.kPZMPos * 0.1;  //3
-    Ki = myData.kIZMPos * 0.1;  //0.05
+    Ki = myData.kIZMPos;  //0.05
     Kd = myData.kDZMPos * 0.1;  //0.0
   } else {
-    Kp = myData.kPPos * 0.1;  //0.76
-    Ki = myData.kIPos * 0.1;  //0.05
-    Kd = myData.kDPos * 0.1;  //0.05
+    Kp = myData.kPPos;  //0.76
+    Ki = myData.kIPos;  //0.05
+    Kd = myData.kDPos;  //0.05
   }
   myPID.SetTunings(Kp, Ki, Kd);
   myPID.Compute();

@@ -1,5 +1,7 @@
 #include "Librerias.h"
-
+#ifndef GLOBALES_H
+  #include "Globales.h"
+#endif
 void setup() {
   // put your setup code here, to run once:
   inicializa();
@@ -7,4 +9,10 @@ void setup() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
+  Serial.println(String(entraMovimiento));
+  if(entraMovimiento)
+  {
+    movimiento();
+    delay(50);
+  }
 }
