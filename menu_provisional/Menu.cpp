@@ -626,6 +626,8 @@ void menuPuertoSerial()
     delay(2000);
     lcd2.clear();
   } while (salir != 1);
+  data.indicacion = 0;
+  mandarDatos();
 }
 
 void mandarDatos()
