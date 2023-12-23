@@ -82,7 +82,7 @@ void posicionExpulsor(int modoActiva)
         for (int i = 0; i <= 180; i++)
         {
             servo1.write(i);
-            delay(30);
+            delay(15);
         }
     }
     else if (modoActiva == 0)
@@ -91,7 +91,7 @@ void posicionExpulsor(int modoActiva)
         for (int i = 180; i >= 0; i--)
         {
             servo1.write(i);
-            delay(30);
+            delay(15);
         }
     }
     else if (modoActiva == 2)
@@ -100,7 +100,7 @@ void posicionExpulsor(int modoActiva)
         for (int i = 0; i <= 180; i++)
         {
             servo1.write(i);
-            delay(30);
+            delay(15);
         }
 
         delay(1000);
@@ -108,7 +108,7 @@ void posicionExpulsor(int modoActiva)
         for (int i = 180; i >= 0; i--)
         {
             servo1.write(i);
-            delay(30);
+            delay(15);
         }
     }
 }
@@ -260,6 +260,7 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     Serial.print("Char: ");
     Serial.println(myData.posServo);
     Serial.println();
+    Setpoint = myData.setPoint;
     if (myData.control == true)
     {
       movimiento();
