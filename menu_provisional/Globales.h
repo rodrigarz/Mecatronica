@@ -28,13 +28,6 @@ typedef struct struct_message {
 	bool controlCinta; //TRUE = posicion, FALSE = velocidad
 	int estadoManual;
 	double setPoint;
-	double periodo;
-	double kPZMVel;
-	double kDZMVel;
-	double kIZMVel;
-	double kPVel;
-	double kDVel;
-	double kIVel;
 	double kPZMPos;
 	double kDZMPos;
 	double kIZMPos;

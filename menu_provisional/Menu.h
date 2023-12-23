@@ -44,7 +44,6 @@ void menuSerie();
 void menuAutomatico();
 void menuAjustes();
 void menuParametros();
-void menuKvel();
 void menuKpos();
 void menuManualEncoder();
 void menuMoverCinta();

@@ -340,9 +340,9 @@ void menuAjustes()
 
 void menuParametros()
 {
-	String menu[] = { "Volver", "PosServo", "Periodo", "Param vel.", "Param. pos", "Grabar param", "Borrar param" };
+	String menu[] = { "Volver", "Param. pos", "Grabar param", "Borrar param" };
 	int index = 0;
-	String opDefecto[7];
+	String opDefecto[4];
 	lcd1.clear();
 	lcd1.setCursor(1, 0);
 	lcd1.print("Parametros");
@@ -351,27 +351,16 @@ void menuParametros()
 	lcd1.setCursor(0, 1);
 	do
 	{
-		opDefecto[1] = String(data.setPoint);
-		opDefecto[2] = String(data.periodo);
 		tiempo = millis();
 
-		index = miMenu(menu, 7, opDefecto, index, lcd1);
+		index = miMenu(menu, 4, opDefecto, index, lcd1);
 
 		switch (index)
 		{
 		case 1:
-			data.setPoint = dameValorInt(menu[index], data.setPoint, 10, -1000, 1000);
-			break;
-		case 2:
-			data.periodo = dameValor(menu[index], data.periodo, 0.05, 0, 1000);
-			break;
-		case 3:
-			menuKvel();
-			break;
-		case 4:
 			menuKpos();
 			break;
-		case 5:
+		case 2:
 			settingsSaveToEEprom();
 			escribeLcd1("Grabando", lcd2);
 			do
@@ -379,7 +368,7 @@ void menuParametros()
 
 			} while (millis() - tiempo < 2000);
 			break;
-		case 6:
+		case 3:
 			settingsWipe();
 			escribeLcd1("Borrando param", lcd2);
 			do
@@ -390,44 +379,6 @@ void menuParametros()
 		}
 	} while (index != 0);
 
-}
-
-void menuKvel()
-{
-	String menu[] = { "Volver", "KpZMVel","KdZMVel","KiZMVel","KpVel","KdVel","KiVel" };
-	int index = 0;
-	String opDefecto[7];
-
-	do {
-		opDefecto[1] = String(data.kPZMVel);
-		opDefecto[2] = String(data.kDZMVel);
-		opDefecto[3] = String(data.kIZMVel);
-		opDefecto[4] = String(data.kPVel);
-		opDefecto[5] = String(data.kDVel);
-		opDefecto[6] = String(data.kIVel);
-
-		index = miMenu(menu, 7, opDefecto, index, lcd1);
-		switch (index) {
-		case 1:                     ////--Kp Zona muerta--////
-			data.kPZMVel = dameValor(menu[index], data.kPZMVel, 0.01, 0, 1000);
-			break;
-		case 2:                     ////--Kd Zona Muerta--////
-			data.kDZMVel = dameValor(menu[index], data.kDZMVel, 0.01, 0, 1000);
-			break;
-		case 3:                     ////--Ki Zona Muerta--////
-			data.kIZMVel = dameValor(menu[index], data.kIZMVel, 0.01, 0, 1000);
-			break;
-		case 4:                     ////--Kp--////
-			data.kPVel = dameValor(menu[index], data.kPVel, 0.01, 0, 1000);
-			break;
-		case 5:                     ////--Kd--////
-			data.kDVel = dameValor(menu[index], data.kDVel, 0.01, 0, 1000);
-			break;
-		case 6:                     ////--Ki--////
-			data.kIVel = dameValor(menu[index], data.kIVel, 0.01, 0, 1000);
-			break;
-		}
-	} while (index != 0);
 }
 
 void menuKpos() {
@@ -446,7 +397,7 @@ void menuKpos() {
 		index = miMenu(menu, 7, opDefecto, index, lcd1);
 		switch (index) {
 		case 1:                     ////--Kp Zona muerta--////
-			data.kPZMPos = dameValor(menu[index], data.kPZMPos, 0.01, 0, 1000);
+			data.kPZMPos = dameValor(menu[index], data.kPZMPos, 0.1, 0, 1000);
 
 			break;
 		case 2:                     ////--Kd Zona Muerta--////
@@ -457,7 +408,7 @@ void menuKpos() {
 			data.kIZMPos = dameValor(menu[index], data.kIZMPos, 0.01, 0, 1000);
 			break;
 		case 4:                     ////--Kp--////
-			data.kPPos = dameValor(menu[index], data.kPPos, 0.01, 0, 1000);
+			data.kPPos = dameValor(menu[index], data.kPPos, 0.1, 0, 1000);
 
 			break;
 		case 5:                     ////--Kd--////
@@ -524,29 +475,33 @@ void menuManualEncoder()
    switch(index)
    {
     case 1:
-    data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
-    data.indicacion = 1;
-    mandarDatos();
-		break;
+      data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
+      data.indicacion = 1;
+      mandarDatos();
+		  break;
+    
     case 2:
-    data.posExpulsor = dameValorInt(menu[index], data.posExpulsor, 1, 0, 2);
-    data.indicacion = 2;
-    mandarDatos();
-    break;
+      data.posExpulsor = dameValorInt(menu[index], data.posExpulsor, 1, 0, 2);
+      data.indicacion = 2;
+      mandarDatos();
+      break;
+    
     case 3:
-    data.gradosPaP = dameValorInt(menu[index], data.gradosPaP, 5, -1000, 1000);
-    data.indicacion = 3;
-    data.velPap = 281.25;
-    mandarDatos();
-    break;
+      data.gradosPaP = dameValorInt(menu[index], data.gradosPaP, 5, -1000, 1000);
+      data.indicacion = 3;
+      data.velPap = 281.25;
+      mandarDatos();
+      break;
+    
     case 4:
-    data.posPap = dameValorInt(menu[index], data.posPap, 1, 1, 3);
-    data.indicacion = 4;
-    mandarDatos();
-    break;
+      data.posPap = dameValorInt(menu[index], data.posPap, 1, 1, 3);
+      data.indicacion = 4;
+      mandarDatos();
+      break;
+    
     case 5:
-    menuMoverCinta();
-    break;
+      menuMoverCinta();
+      break;
    }
   }while (index != 0);
 
@@ -576,11 +531,13 @@ void menuMoverCinta()
         }
         break;
       case 2:
-        data.setPoint = dameValor(menu[index], data.setPoint, 10, -10000, 10000);
+        data.setPoint = dameValor(menu[index], data.setPoint, 10, -1000, 1000);
         mandarDatos();
         break;
     }
   } while(index!=0);
+  data.indicacion = 0;
+  mandarDatos();
 }
 
 void menuPuertoSerial()
