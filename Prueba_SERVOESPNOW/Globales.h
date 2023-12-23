@@ -1,7 +1,7 @@
 #ifndef GLOBALES_H
 #define GLOBALES_H
 
-const int dirPin = 5;
+const int dirPin = 4;
 const int stepPin = 15;
 const int EN = 18;
 static const int servoPin = 12;

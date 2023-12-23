@@ -2,7 +2,7 @@
 
     const int dirRA = 25;
     const int dirRB = 27;
-    const int enR = 26;
+    const int enR = 5;
 
 void setupMovement(){
   pinMode(dirRA,   OUTPUT);
@@ -15,10 +15,16 @@ void Motor(int speedR){
   if(speedR>0){   //DELANTE
     digitalWrite(dirRA , HIGH );
     digitalWrite(dirRB ,  LOW  );
+    analogWrite(enR, abs(speedR));
   }
-  else{   //ATRAS
+  else if(speedR<0) {//ATRAS
     digitalWrite(dirRA , LOW );
     digitalWrite(dirRB , HIGH );
+    analogWrite(enR, abs(speedR));
   }
-    analogWrite(enR, abs(speedR)); 
+  else{
+    digitalWrite(dirRA , LOW );
+    digitalWrite(dirRB , LOW );
+    analogWrite(enR, 0);
+  } 
 }
