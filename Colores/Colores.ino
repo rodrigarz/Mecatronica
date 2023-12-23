@@ -1,5 +1,5 @@
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
+//#include <Adafruit_Sensor.h>
 #include <Adafruit_TCS34725.h>
 
 // Inicializa el sensor de color TCS34725

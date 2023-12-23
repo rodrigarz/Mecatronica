@@ -26,36 +26,43 @@ void movimiento()
     switch (myData.indicacion)
     {
     case 1:
+        movMotorDC = 0;
         posicionServo();
         myData.indicacion = 0;
         break;
 
     case 2:
+        movMotorDC = 0;
         posicionExpulsor(myData.posExpulsor);
         myData.indicacion = 0;
         break;
 
     case 3:
+        movMotorDC = 0;
         pasosPasoPaso();
         myData.indicacion = 0;
         break;
 
     case 4:
+        movMotorDC = 0;
         posicionPasoPaso(myData.posPap, false);
         myData.indicacion = 0;
         break;
 
     case 5:
+        movMotorDC = 2;
         controlVelocidad();
         myData.indicacion = 0;
         break;
 
     case 6: 
+        movMotorDC = 1;
         controlPosicion();
         myData.indicacion = 0;
         break;
 
     default:
+        movMotorDC = 0;
         break;
     }
 }
@@ -239,7 +246,7 @@ void inicializa()
     pinMode(pinFinalCarrera, INPUT_PULLUP);
 
     ESP32Encoder::useInternalWeakPullResistors = UP;
-    myEnc.attachHalfQuad(23, 19);
+    myEnc.attachHalfQuad(encoderA, encoderB);
     myEnc.setCount(0);
     myEnc.clearCount();
 
@@ -276,69 +283,71 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
 }
 
 void controlVelocidad() {
-  unsigned long int t, dt=50; // intervalo para el calculo de velocidad
-  float tiempo;
-  int8_t inc;
-  double Pos;
-  static double setpoin_ant;
+  do{
+    unsigned long int t, dt=50; // intervalo para el calculo de velocidad
+    float tiempo;
+    int8_t inc;
+    double Pos;
+    static double setpoin_ant;
 
-  static double Pos_ant = myEnc.getCount();
+    static double Pos_ant = myEnc.getCount();
 
-  //float periodo;
-  static unsigned long int tinicio = millis();
-  static unsigned long int t_ant = millis();   // Temporizador para calculo velocidad
-  static unsigned long int t_ant2 = millis();  // Temporizador para calculo Periodo
+    //float periodo;
+    static unsigned long int tinicio = millis();
+    static unsigned long int t_ant = millis();   // Temporizador para calculo velocidad
+    static unsigned long int t_ant2 = millis();  // Temporizador para calculo Periodo
 
-  // // Calculo velocidad
+    // // Calculo velocidad
 
 
-  t = millis();
-  if (t - t_ant > dt) {
-    Pos = myEnc.getCount();
-    Input = (double)1000 * (Pos - Pos_ant) / (t - t_ant);  // Calculo la velocidad
-    t_ant = t;
-    Pos_ant = Pos;
-    Serial.print("+SetPoint:" + String(myData.setPoint));
-    Serial.print(", ");
-    Serial.print("Input:" + String(Input));
-    Serial.print(", ");
-    Serial.print("Salida:" + String(salida));
-    // escribeLcd1(stringEstado[myData.estado] + ": " + String(Input));
-    Serial.print(", ");
-    Serial.println("Error:" + String(myData.setPoint - Input));
-  }
-
-  if(setpoin_ant != myData.setPoint)
-  {
-    if (myData.setPoint > 0)
-    {
-      salida = map(myData.setPoint, 0, 1000, 140, 255);
-    } else
-    {
-      salida = map(myData.setPoint, -1000, 0, -255, -140);
+    t = millis();
+    if (t - t_ant > dt) {
+      Pos = myEnc.getCount();
+      Input = (double)1000 * (Pos - Pos_ant) / (t - t_ant);  // Calculo la velocidad
+      t_ant = t;
+      Pos_ant = Pos;
+      Serial.print("+SetPoint:" + String(myData.setPoint));
+      Serial.print(", ");
+      Serial.print("Input:" + String(Input));
+      Serial.print(", ");
+      Serial.print("Salida:" + String(salida));
+      // escribeLcd1(stringEstado[myData.estado] + ": " + String(Input));
+      Serial.print(", ");
+      Serial.println("Error:" + String(myData.setPoint - Input));
     }
 
-    setpoin_ant = myData.setPoint;
-  }
+    if(setpoin_ant != myData.setPoint)
+    {
+      if (myData.setPoint > 0)
+      {
+        salida = map(myData.setPoint, 0, 1000, 140, 255);
+      } else
+      {
+        salida = map(myData.setPoint, -1000, 0, -255, -140);
+      }
 
-  if(t - t_ant2 > dt)
-  {
-    if((myData.setPoint - Input) > 5)
-    {
-      salida = salida + 1;
-    } else if( (myData.setPoint - Input) < -5)
-    {
-      salida = salida - 1;
+      setpoin_ant = myData.setPoint;
     }
-    t_ant2 = t;
-  }
-  salida = constrain(salida, -255, 255);
-  
-  if(t-tinicio > dt-15)
-  {
-    Motor(salida);
-    tinicio = t;
-  }
+
+    if(t - t_ant2 > dt)
+    {
+      if((myData.setPoint - Input) > 5)
+      {
+        salida = salida + 1;
+      } else if( (myData.setPoint - Input) < -5)
+      {
+        salida = salida - 1;
+      }
+      t_ant2 = t;
+    }
+    salida = constrain(salida, -255, 255);
+    
+    if(t-tinicio > dt-15)
+    {
+      Motor(salida);
+      tinicio = t;
+    }
+  while(movMotorDC == 1)
 }
 
 void controlPosicion() {
@@ -430,7 +439,7 @@ double  move(double xd, double vmax, double a, double dt) {
 
 void buscaInicio()
 {
-  while(digitalRead(pinFinalCarrera) == 1)
+  while(digitalRead(pinFinalCarrera) == HIGH)
   {
     mueveMotorB(stepInicial);
   }

@@ -31,13 +31,6 @@ void settingsReset() {
   data.control = VELOCIDAD;
   data.estadoManual = MANUAL_ENC;
   data.setPoint = 500;
-  data.periodo = 15;
-  data.kPZMVel = 0.2;
-  data.kDZMVel = 0;
-  data.kIZMVel = 0.9;
-  data.kPVel = 0.2;
-  data.kDVel = 0;
-  data.kIVel = 0.15;
   data.kPZMPos = 2;
   data.kDZMPos = 0;
   data.kIZMPos = 0.15;
