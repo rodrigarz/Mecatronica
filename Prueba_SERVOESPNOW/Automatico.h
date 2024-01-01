@@ -1,7 +1,9 @@
 #ifndef AUTOMATICO_H
 #define AUTOMATICO_H
-#include "Librerias.h"
 
+//#ifndef LIBRERIAS_H
+  #include "Librerias.h"
+//#endif
 
 void plantaAutomatica();
 

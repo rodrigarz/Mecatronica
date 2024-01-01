@@ -12,6 +12,8 @@ const int stepInicial = 2;
 const int sensorIR = 33;
 
 
+extern int gradosActualMesa;
+
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap, 5 = velCinta, 6 = posCinta
 	int posServo; //Ajusta por grados el servo
@@ -35,5 +37,6 @@ typedef struct struct_message {
 	byte eepromValidData;
 }struct_message;
 
+extern struct struct_message myData;
 
 #endif
