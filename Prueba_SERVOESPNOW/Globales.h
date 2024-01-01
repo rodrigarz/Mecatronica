@@ -7,7 +7,7 @@ const int EN = 18;
 static const int servoPin = 12;
 const int encoderA = 23; //Morado
 const int encoderB = 19; //Azul
-const int pinFinalCarrera = 2;
+const int pinFinalCarrera = 13;
 const int stepInicial = 2;
 const int sensorIR = 33;
 

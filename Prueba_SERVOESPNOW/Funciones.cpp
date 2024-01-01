@@ -1,3 +1,4 @@
+#include "esp32-hal-gpio.h"
 #include "Funciones.h"
 
 struct struct_message myData;
@@ -253,7 +254,7 @@ void inicializa()
     digitalWrite(EN, LOW);
     servo1.attach(servoPin);
 
-    pinMode(pinFinalCarrera, INPUT_PULLUP);
+    pinMode(pinFinalCarrera, INPUT_PULLDOWN);
 
     ESP32Encoder::useInternalWeakPullResistors = UP;
     myEnc.attachHalfQuad(encoderA, encoderB);
@@ -270,6 +271,8 @@ void inicializa()
     Setpoint = 0;
     gradosActualMesa = 0;
     Setpoint = myData.setPoint;
+    //mueveMotorB(5);
+    myData.velPap = 250;
     buscaInicio();
 }
 
@@ -447,7 +450,7 @@ double  move(double xd, double vmax, double a, double dt) {
 
 void buscaInicio()
 {
-  while(digitalRead(pinFinalCarrera) == HIGH)
+  while(digitalRead(pinFinalCarrera) == LOW)
   {
     mueveMotorB(stepInicial);
   }
