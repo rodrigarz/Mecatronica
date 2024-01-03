@@ -1,8 +1,8 @@
 #include "Librerias.h"
 
-    const int dirRA = 25;
-    const int dirRB = 27;
-    const int enR = 5;
+const int dirRA = 25;
+const int dirRB = 27;
+const int enR = 5;
 
 void setupMovement(){
   pinMode(dirRA,   OUTPUT);

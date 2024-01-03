@@ -4,6 +4,7 @@
 #include "Globales.h"
 #include "Librerias.h"
 
+void inicializaMesa();
 void pasosPasoPaso();
 void posicionPasoPaso(int posicion, bool modoAuto);
 void mueveMotor(int stepsToMove);

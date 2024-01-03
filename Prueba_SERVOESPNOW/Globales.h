@@ -1,10 +1,12 @@
 #ifndef GLOBALES_H
 #define GLOBALES_H
 
+#include <Arduino.h>
+
 const int dirPin = 4;
 const int stepPin = 15;
 const int EN = 18;
-static const int servoPin = 12;
+const int servoPin = 12;
 const int encoderA = 23; //Morado
 const int encoderB = 19; //Azul
 const int pinFinalCarrera = 13;
@@ -13,6 +15,9 @@ const int sensorIR = 33;
 
 
 extern int gradosActualMesa;
+extern double Setpoint;
+extern bool entraMovimiento;
+extern bool entraMovimiento;
 
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap, 5 = velCinta, 6 = posCinta
@@ -38,5 +43,6 @@ typedef struct struct_message {
 }struct_message;
 
 extern struct struct_message myData;
+
 
 #endif

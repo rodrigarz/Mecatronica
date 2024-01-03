@@ -1,9 +1,17 @@
-#include <Arduino.h>
 #include "mesa.h"
 
 int stepDelay = 0;
 int gradosActualMesa = 0;
 const int steps = 200*16;
+
+void inicializaMesa()
+{
+  pinMode(dirPin, OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  pinMode(EN, OUTPUT);
+  digitalWrite(EN, LOW);
+  gradosActualMesa = 0;
+}
 
 void pasosPasoPaso()
 {
