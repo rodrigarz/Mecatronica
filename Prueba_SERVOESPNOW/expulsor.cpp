@@ -11,7 +11,8 @@ void posicionServo()
 {
   Serial.println("Entro");
     int servoPosAnt = 0;
-    int servoPosition = map(myData.posServo, 0, 180, 0, 180);
+    int servoPosition = map(myData.posServo, 0, 75, 0, 75);
+    servoPosition = constrain(servoPosition, 0, 75);
     servoPosAnt = servoPosition;
     servo1.write(myData.posServo);
     if (servoPosAnt != servoPosition)
@@ -27,7 +28,7 @@ void posicionExpulsor(int modoActiva)
     {
         servo1.write(0);
         delay(50);
-        for (int i = 0; i <= 180; i++)
+        for (int i = 0; i <= 75; i++)
         {
             servo1.write(i);
             delay(50);
@@ -35,9 +36,9 @@ void posicionExpulsor(int modoActiva)
     }
     else if (modoActiva == 0)
     {
-        servo1.write(180);
+        servo1.write(75);
         delay(50);
-        for (int i = 180; i >= 0; i--)
+        for (int i = 75; i >= 0; i--)
         {
             servo1.write(i);
             delay(50);
@@ -48,7 +49,7 @@ void posicionExpulsor(int modoActiva)
         //Para movimiento progresivo
         servo1.write(0);
         delay(50);
-        for (int i = 0; i <= 180; i++)
+        for (int i = 0; i <= 75; i++)
         {
             servo1.write(i);
             delay(50);
@@ -56,7 +57,7 @@ void posicionExpulsor(int modoActiva)
 
         delay(1000);
 
-        for (int i = 180; i >= 0; i--)
+        for (int i = 75; i >= 0; i--)
         {
             servo1.write(i);
             delay(100);

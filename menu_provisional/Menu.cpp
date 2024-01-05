@@ -475,7 +475,7 @@ void menuManualEncoder()
    switch(index)
    {
     case 1:
-      data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 180);
+      data.posServo = dameValorInt(menu[index], data.posServo, 5, 0, 75);
       data.indicacion = 1;
       mandarDatos();
 		  break;
