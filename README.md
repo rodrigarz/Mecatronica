@@ -5,6 +5,7 @@ En control posición del EMG30 - Setpoint 90 es 1 vuelta del eje de salida
 
 
 1.- Modelado del conjunto en autodesk inventor
+
 2.- Memoria del proyecto que incluya:
   2.1.- Introducción con justificación y objetivos del proyecto
   2.1.- Diseño mecánico. Capturas de modelo ensamblado
