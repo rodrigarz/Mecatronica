@@ -18,7 +18,7 @@ uint8_t placaServo[] = {0xB4, 0xE6, 0x2D, 0xFB, 0x1B, 0xBD};
 uint8_t placaControl2[] = {0x10, 0x91, 0xA8, 0x19, 0xC8, 0xF4};
 
 
-struct struct_message data;
+struct struct_message data = {};
 struct mensaje_control mensaje;
 
 byte downArrow[8] = {

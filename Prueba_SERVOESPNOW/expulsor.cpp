@@ -5,6 +5,7 @@ Servo servo1;
 void inicializaServo()
 {
   servo1.attach(servoPin);
+  servo1.write(0);
 }
 
 void posicionServo()
@@ -14,7 +15,7 @@ void posicionServo()
     int servoPosition = map(myData.posServo, 0, 75, 0, 75);
     servoPosition = constrain(servoPosition, 0, 75);
     servoPosAnt = servoPosition;
-    servo1.write(myData.posServo);
+    servo1.write(servoPosition);
     if (servoPosAnt != servoPosition)
     {
         Serial.println(servoPosition);

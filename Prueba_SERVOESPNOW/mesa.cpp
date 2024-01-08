@@ -114,4 +114,6 @@ void buscaInicio()
   {
     mueveMotorB(stepInicial);
   }
+
+  mueveMotor(75);
 }

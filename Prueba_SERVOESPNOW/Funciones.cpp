@@ -12,21 +12,25 @@ void movimiento()
     case 1:
         posicionServo();
         myData.indicacion = 0;
+        myData = {};
         break;
 
     case 2:
         posicionExpulsor(myData.posExpulsor);
         myData.indicacion = 0;
+        myData = {};
         break;
 
     case 3:
         pasosPasoPaso();
         myData.indicacion = 0;
+        myData = {};
         break;
 
     case 4:
         posicionPasoPaso(myData.posPap, false);
         myData.indicacion = 0;
+        myData = {};
         break;
 
     case 5:
@@ -35,6 +39,7 @@ void movimiento()
           vTaskDelay(1);
         }while(myData.indicacion == 5);
         myData.indicacion = 0;
+        myData = {};
         break;
 
     case 6: 
@@ -43,10 +48,12 @@ void movimiento()
           vTaskDelay(1);
         }while(myData.indicacion == 6);
         myData.indicacion = 0;
+        myData = {};
         break;
 
     default:
         Motor(0);
+        myData = {};
         break;
     }
     delay(50);
