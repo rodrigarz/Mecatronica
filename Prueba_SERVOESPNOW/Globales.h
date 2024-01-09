@@ -12,6 +12,7 @@ const int encoderB = 19; //Azul
 const int pinFinalCarrera = 13;
 const int stepInicial = 2;
 const int sensorIR = 33;
+const int ledColores = 14;
 
 
 extern int gradosActualMesa;

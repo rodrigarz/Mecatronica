@@ -85,9 +85,11 @@ void inicializa()
     inicializaMesa();
     inicializaServo();
     inicializaCinta();
+    inicializaColores();
 
     pinMode(pinFinalCarrera, INPUT_PULLDOWN);
     pinMode(sensorIR, INPUT);
+    pinMode(ledColores, OUTPUT);
 
     myData.velPap = 250;
     buscaInicio();

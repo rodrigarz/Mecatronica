@@ -6,5 +6,7 @@
 //#endif
 
 void plantaAutomatica();
+void inicializaColores();
+int obtenerColor();
 
 #endif

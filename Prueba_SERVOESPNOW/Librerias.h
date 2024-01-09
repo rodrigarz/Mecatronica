@@ -6,7 +6,9 @@
 #include <ESP32Encoder.h>
 #include <esp_now.h>
 #include <iostream>
-
+#include <Wire.h>
+#include <Adafruit_TCS34725.h>
+#include <ColorConverterLib.h>
 
 #include "Globales.h"
 #include "PID_v1.h"
