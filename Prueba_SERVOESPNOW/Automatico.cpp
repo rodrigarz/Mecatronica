@@ -5,28 +5,29 @@
 void plantaAutomatica()
 {
   unsigned long int t;
-	int clasificacion[3] = { 1, 2, 3 };
-	while (digitalRead(sensorIR) == 0)
+	while (digitalRead(sensorIR) == 1)
 	{
-		Motor(100);
-    vTaskDelay(1);
+		Motor(0);
+    //vTaskDelay(1);
 	}
 
-	unsigned long int tactual = millis();
-  t = millis();
-  while(t-tactual < 1000)
+  if(digitalRead(sensorIR) == 0)
   {
-		Motor(70);
-    t = millis();
-    vTaskDelay(1);
+    Motor(140);
+   // vTaskDelay(1);
+  }
+  
+	unsigned long int tactual = millis();
+  while(millis()-tactual < 3000)
+  {
+   // vTaskDelay(1);
 	}
-  // if(t - tactual > 1000)
-  // {
-  //   Motor(0);
-  // }
-	//A�adir aqui el sistema de identificacion y clasificacion
-	for (int j = 0; j < sizeof(clasificacion); j++)
-	{
-		posicionPasoPaso(clasificacion[j], true);
-	}
+
+  tactual = millis();
+  Motor(0);
+
+  posicionPasoPaso(2, true);
+
+  delay(50);
+
 }

@@ -300,11 +300,11 @@ void menuPrincipal()
 		switch (index)
 		{
 		case 1:
-			data.estado = MANUAL;
+			data.control = MANUAL;
 			menuManual();
 			break;
 		case 2:
-			data.estado = AUTOMATICO;
+			data.control = AUTOMATICO;
 			mandarDatos();
 			break;
 		case 3:

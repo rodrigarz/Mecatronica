@@ -14,5 +14,11 @@ void loop() {
   {
     movimiento();
     delay(50);
+    entraMovimiento = false;
+  } else if (entraAutomatico)
+  {
+    plantaAutomatica();
+    delay(50);
+    entraAutomatico = false;
   }
 }

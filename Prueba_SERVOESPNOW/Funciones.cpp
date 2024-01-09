@@ -4,6 +4,7 @@ struct struct_message myData = {};
 //esp_now_peer_info_t peerInfo;
 
 bool entraMovimiento = false;
+bool entraAutomatico = false;
 
 void movimiento()
 {
@@ -12,25 +13,27 @@ void movimiento()
     case 1:
         posicionServo();
         myData.indicacion = 0;
-        myData = {};
+        //myData = {};
         break;
 
     case 2:
         posicionExpulsor(myData.posExpulsor);
         myData.indicacion = 0;
-        myData = {};
+        //myData = {};
         break;
 
     case 3:
         pasosPasoPaso();
         myData.indicacion = 0;
-        myData = {};
+       // myData = {};
         break;
 
     case 4:
+        Serial.println("Aqui1");
         posicionPasoPaso(myData.posPap, false);
+        Serial.println("Salgo");
         myData.indicacion = 0;
-        myData = {};
+        //myData = {};
         break;
 
     case 5:
@@ -39,7 +42,7 @@ void movimiento()
           vTaskDelay(1);
         }while(myData.indicacion == 5);
         myData.indicacion = 0;
-        myData = {};
+       // myData = {};
         break;
 
     case 6: 
@@ -48,12 +51,12 @@ void movimiento()
           vTaskDelay(1);
         }while(myData.indicacion == 6);
         myData.indicacion = 0;
-        myData = {};
+       // myData = {};
         break;
 
     default:
         Motor(0);
-        myData = {};
+        //myData = {};
         break;
     }
     delay(50);
@@ -100,10 +103,13 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     if (myData.control == true)
     {
       entraMovimiento = true;
+      entraAutomatico = false;
     }
     else if (myData.control == false)
     {
-      plantaAutomatica();
+      entraAutomatico = true;
+      entraMovimiento = false;
+      myData.indicacion = 0;
     }
 }
 

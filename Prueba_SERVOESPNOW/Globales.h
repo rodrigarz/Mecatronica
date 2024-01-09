@@ -17,7 +17,7 @@ const int sensorIR = 33;
 extern int gradosActualMesa;
 extern double Setpoint;
 extern bool entraMovimiento;
-extern bool entraMovimiento;
+extern bool entraAutomatico;
 
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap, 5 = velCinta, 6 = posCinta

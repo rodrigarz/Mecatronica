@@ -1,6 +1,7 @@
+#include "esp32-hal.h"
 #include "mesa.h"
 
-int stepDelay = 0;
+//volatile int stepDelay = 0;
 int gradosActualMesa = 0;
 const int steps = 200*16;
 
@@ -37,18 +38,25 @@ void pasosPasoPaso()
 void posicionPasoPaso(int posicion, bool modoAuto)
 {
     if (posicion == 1) {
-
+        Serial.println("Hola");
         if (gradosActualMesa + (steps / 4)/8.89 > 300)
         {
             Serial.println("No se puede mover la mesa mas distancia");
             return;
         }
+        Serial.println("Antes de mover");
         mueveMotor(steps / 4);
         if (modoAuto)
         {
             posicionExpulsor(2);
         }
-        delay(1000);
+        unsigned long int tactual = millis();
+         while(millis()-tactual < 1000)
+        {
+          
+	      }
+
+        tactual = millis();
         mueveMotorB(steps / 4);
     }
     else if (posicion == 2) {
@@ -85,9 +93,12 @@ void posicionPasoPaso(int posicion, bool modoAuto)
 
 
 void mueveMotor(int stepsToMove) {
+    Serial.println("En mueve");
     digitalWrite(dirPin, HIGH); //Definimos sentido
-    stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));///definidmos velocidad
+    static int stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));///definidmos velocidad
 
+    Serial.println("Antes de for");
+    Serial.println(stepDelay);
     for (int x = 0; x < stepsToMove; x++) {
         digitalWrite(stepPin, HIGH);
         delayMicroseconds(stepDelay);
@@ -98,7 +109,7 @@ void mueveMotor(int stepsToMove) {
 
 void mueveMotorB(int stepsToMove) {
     digitalWrite(dirPin, LOW);
-    stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));
+    static int stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));
 
     for (int x = 0; x < stepsToMove; x++) {
         digitalWrite(stepPin, HIGH);
