@@ -12,9 +12,11 @@ struct struct_message miMensaje;
 
 static bool variable = false;
 
-const unsigned long tiempoMaximo = 6000;
+const unsigned long tiempoMaximo = 3000;
 unsigned long tiempoAnterior = 0;
 unsigned long lastMillis = 0;
+
+static int contador = 0;
 
 void cambiarColorRojo() {
   if(miMensaje.emergencia == true)
@@ -58,6 +60,7 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len){
   if(miMensaje.emergencia == false)
   {
     digitalWrite(relayPin, HIGH);
+    contador = 0;
   }
   else
   {
@@ -67,13 +70,18 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len){
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // put your main code here, to run repeatedly
   unsigned long tiempoActual = millis();
   if(tiempoActual - tiempoAnterior >= tiempoMaximo)
   {
+    contador = contador + 1;
+    tiempoAnterior = tiempoActual;
+  }
+
+  if(contador >= 2)
+  {
     digitalWrite(relayPin, LOW);
     miMensaje.emergencia = true;
-    tiempoAnterior = tiempoActual;
   }
 
   if(miMensaje.emergencia == true)
