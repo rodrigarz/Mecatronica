@@ -1,6 +1,19 @@
+/*
+Programa_control_con_rele.ino
+
+Autor: Grupo 5 mecatrónica
+Año: 2023/2024
+
+Descripción:
+Sistema de seguridad para cortar la corriente a la planta mediante un relé
+
+*/
+
+
 #include "WiFi.h"
 #include <esp_now.h>
 
+//Inicializamos todas las variables y estructuras necesarias
 const int relayPin = 8;
 const int pinLed = 3;
 
@@ -18,6 +31,7 @@ unsigned long lastMillis = 0;
 
 static int contador = 0;
 
+//Funcion para encender y apagar alternativamente el led
 void cambiarColorRojo() {
   if(miMensaje.emergencia == true)
   {
@@ -31,27 +45,29 @@ void cambiarColorRojo() {
 
 void setup() {
   // put your setup code here, to run once:
-    Serial.begin(115200);
-    Serial.println(WiFi.macAddress());
-    WiFi.mode(WIFI_STA);
+  Serial.begin(115200);
+  Serial.println(WiFi.macAddress());
+  WiFi.mode(WIFI_STA);
 
-    // Init ESP-NOW
-    if (esp_now_init() != ESP_OK) {
-        Serial.println("Error initializing ESP-NOW");
-        return;
-    }
-    else
-    {
-        Serial.print("Todo ok");
-    }
+  // Init ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+      Serial.println("Error initializing ESP-NOW");
+      return;
+  }
+  else
+  {
+      Serial.print("Todo ok");
+  }
 
-    esp_now_register_recv_cb(OnDataRecv);
-    pinMode(relayPin, OUTPUT);
-    pinMode(pinLed, OUTPUT);
-    //miMensaje.emergencia = false;
+  //Bindeamos el callback e inicializamos los pines
+  esp_now_register_recv_cb(OnDataRecv);
+  pinMode(relayPin, OUTPUT);
+  pinMode(pinLed, OUTPUT);
 
 }
 
+
+//Callback al recibir informacion, si se detecta emergencia, se apaga el relé
 void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len){
   memcpy(&miMensaje, incomingData, sizeof(miMensaje));
   variable = miMensaje.emergencia;
@@ -69,6 +85,8 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len){
   Serial.println(variable);
 }
 
+
+//Si pasan dos periodos sin recibir ok, se apaga la planta
 void loop() {
   // put your main code here, to run repeatedly
   unsigned long tiempoActual = millis();
@@ -84,6 +102,7 @@ void loop() {
     miMensaje.emergencia = true;
   }
 
+  //Si hay emergencia, el led parpadea rojo
   if(miMensaje.emergencia == true)
   {
     if (millis() - lastMillis >= 500) {
