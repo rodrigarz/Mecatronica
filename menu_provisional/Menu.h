@@ -1,3 +1,15 @@
+/*
+Menu.h
+
+Autor: Grupo 5 mecatrónica
+Año: 2023/2024
+
+Descripción:
+Contiene toda la funcionalidad para usar el menu mediante rotary encoder en las dos pantallas del mando
+
+*/
+
+
 #ifndef Pantalla_h
 #define Pantalla_h
 
@@ -16,8 +28,8 @@ SCL       GPIO22
 #define ROTARY_ENCODER_BUTTON_PIN 32
 #define ROTARY_ENCODER_VCC_PIN -1
 
-#define DIRLCD1 0x3F
-#define DIRLCD2	0X27
+#define DIRLCD1 0x27
+#define DIRLCD2	0X3F
 
 int16_t leeEncoder();
 int8_t deltaEncoder();

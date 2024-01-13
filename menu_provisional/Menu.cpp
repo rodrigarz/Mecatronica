@@ -21,6 +21,7 @@ uint8_t placaControl2[] = {0x10, 0x91, 0xA8, 0x19, 0xC8, 0xF4};
 struct struct_message data = {};
 struct mensaje_control mensaje;
 
+//Caracteres para los menus
 byte downArrow[8] = {
   0b00100, //   *
   0b00100, //   *
@@ -57,17 +58,20 @@ byte menuCursor[8] = {
 
 AiEsp32RotaryEncoder rotaryEncoder = AiEsp32RotaryEncoder(ROTARY_ENCODER_DT, ROTARY_ENCODER_CLK, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN);
 
+//Funcion para leer el encoder
 int16_t leeEncoder()
 {
 	return(rotaryEncoder.readEncoder());
 }
 
+//Funcion para leer el incremento del encoder
 int8_t deltaEncoder()
 {
 	int8_t encoderDelta = rotaryEncoder.encoderChanged();
 	return encoderDelta;
 }
 
+//Funcion para inicializar el encoder
 void inicializaRotaryEncoder()
 {
 	rotaryEncoder.begin();
@@ -75,6 +79,7 @@ void inicializaRotaryEncoder()
 	rotaryEncoder.setBoundaries(-10000, 10000, true);
 }
 
+//Funcion para inicializar los LCD
 void inicializacion()
 {
   inicializaLcd(lcd1);
@@ -84,6 +89,7 @@ void inicializacion()
   data.estado = 0;
 }
 
+//Funcion para inicializar uno de los LCD
 void inicializaLcd(LiquidCrystal_I2C &display)
 {
 	display.init();
@@ -93,6 +99,7 @@ void inicializaLcd(LiquidCrystal_I2C &display)
 	display.createChar(2, downArrow);
 }
 
+//Escribe en LCD 1
 void escribeLcd(String mensaje1, String mensaje2)
 {
 	lcd1.setCursor(0, 0);
@@ -103,6 +110,7 @@ void escribeLcd(String mensaje1, String mensaje2)
 	for (int i = mensaje2.length(); i < lcdColumns; i++) lcd1.print(" ");
 }
 
+//Escribe en el LCD indicado como parametro
 void escribeLcd1(String mensaje, LiquidCrystal_I2C &display)
 {
 	display.setCursor(0, 0);
@@ -110,6 +118,7 @@ void escribeLcd1(String mensaje, LiquidCrystal_I2C &display)
 	for (int i = mensaje.length(); i < lcdColumns; i++) display.print(" ");
 }
 
+//Funcion que indica el estado del boton del rotary
 bool botonEncoderPulsado()
 {
 	if (rotaryEncoder.currentButtonState() == BUT_RELEASED)
@@ -118,6 +127,7 @@ bool botonEncoderPulsado()
 		return true;
 }
 
+//Funcion para gestionar menu
 int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef, LiquidCrystal_I2C display){
   int valEncoder,valEncoderAnt;
   int opcionMenu=nMenuOpDef+1;
@@ -154,6 +164,7 @@ int miMenu(String menu[],int maxMenuItems,   String opDefecto[], int nMenuOpDef,
   return opcionMenu-1;
 }
 
+//Funcion para mostrar menu
 void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcionMenu, LiquidCrystal_I2C &display)
 {
  int numPags, pag;
@@ -192,7 +203,7 @@ void muestraMenu(String menu[], int maxMenuItems, String opDefecto[], int opcion
 }
 
 
-
+//Funcion para variar el valor de un double con el encoder
 double dameValor(String cadena, double valor, double inc, double min, double max)
 {
 	int valEncoder, valEncoderAnt;
@@ -234,7 +245,7 @@ double dameValor(String cadena, double valor, double inc, double min, double max
 	return valor;
 }
 
-
+//Funcion para variar el valor de un int con el encoder
 int dameValorInt(String cadena, int valor, int inc, int min, int max)
 {
 	int valEncoder, valEncoderAnt;
@@ -276,10 +287,12 @@ int dameValorInt(String cadena, int valor, int inc, int min, int max)
 	return valor;
 }
 
+
+//Funcion con los datos del menu principal
 void menuPrincipal()
 {
-	String menu[] = { "Volver", "Manual", "Automatico", "Ajustes" };
-	String opDefecto[4];
+	String menu[] = {"Manual", "Automatico", "Ajustes" };
+	String opDefecto[3];
 	int index = 0;
 	lcd2.clear();
 
@@ -287,33 +300,34 @@ void menuPrincipal()
 	{
 		if (data.control == AUTOMATICO)
 		{
-			opDefecto[1] = "";
-			opDefecto[2] = "*";
+			opDefecto[0] = "";
+			opDefecto[1] = "*";
 		}
 		else
 		{
-			opDefecto[1] = "*";
-			opDefecto[2] = "";
+			opDefecto[0] = "*";
+			opDefecto[1] = "";
 		}
-		index = miMenu(menu, 4, opDefecto, index, lcd1);
+		index = miMenu(menu, 3, opDefecto, index, lcd1);
 
 		switch (index)
 		{
-		case 1:
+		case 0:
 			data.control = MANUAL;
 			menuManual();
 			break;
-		case 2:
+		case 1:
 			data.control = AUTOMATICO;
 			mandarDatos();
 			break;
-		case 3:
+		case 2:
 			menuAjustes();
 			break;
 		}
-	} while (index == 3);
+	} while (index == 1);
 }
 
+//Funcion con los datos del menu de ajustes
 void menuAjustes()
 {
 	String menu[] = { "Volver", "Control", "Parametros" };
@@ -338,6 +352,7 @@ void menuAjustes()
 	} while (index != 0);
 }
 
+//Funcion con los datos y funcionalidad del menu de parametros, permite grabar o borrar en eeprom
 void menuParametros()
 {
 	String menu[] = { "Volver", "Param. pos", "Grabar param", "Borrar param" };
@@ -381,6 +396,7 @@ void menuParametros()
 
 }
 
+//Funcion con los valores de los parametros del PID en posicion
 void menuKpos() {
 	String menu[] = { "Volver", "KpZMPos","KdZMPos","KiZMPos","KpPos","KdPos","KiPos" };
 	int index = 0;
@@ -423,6 +439,8 @@ void menuKpos() {
 
 }
 
+
+//Menu manual, permite elegir entre manual con encoder o por puerto serie
 void menuManual()
 {
 	data.control = true;
@@ -459,6 +477,8 @@ void menuManual()
 	} while (index != 0);
 }
 
+
+//Manual con enconder, permite fijar el valor de los actuadores mediante el rotary encoder
 void menuManualEncoder()
 {
   String menu[] = {"Volver", "Grados Servo", "Expulsor", "Grados mesa", "Pos PaP", "Mov Cinta"};
@@ -507,6 +527,7 @@ void menuManualEncoder()
 
 }
 
+//Menu para el movimiento de la cinta, cambia entre control posicion y velocidad, y permite fijar el setpoint
 void menuMoverCinta()
 {
   String menu[] = {"Volver", "Tipo control", "SetPoint"};
@@ -543,6 +564,7 @@ void menuMoverCinta()
   mandarDatos();
 }
 
+//Menu para dar instrucciones por el puerto serial, si no existe la instruccion indicada, sale
 void menuPuertoSerial()
 {
   String comando, entrada;
@@ -630,6 +652,7 @@ void menuPuertoSerial()
   mandarDatos();
 }
 
+//Funcion para mandar los datos al esclavo de la planta
 void mandarDatos()
 {
   esp_err_t result = esp_now_send(placaServo, (uint8_t *) &data, sizeof(data));
@@ -642,6 +665,8 @@ void mandarDatos()
   }
 }
 
+
+//Funcion para separar la cadena introducida por el puerto serie
 int splitString(String input, char delimiter, String parts[])
  {
   int partIndex = 0;

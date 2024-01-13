@@ -1,3 +1,15 @@
+/*
+Globales.h
+
+Autor: Grupo 5 mecatrónica
+Año: 2023/2024
+
+Descripción:
+Contiene los macros necesarios, y las estructuras necesarias para el funcionamiento
+
+*/
+
+
 #ifndef Globales_h
 #define Globales_h
 
@@ -13,7 +25,6 @@
 #define PUERTO_SERIAL 1
 
 
-//Tamaño actual: 145 bytes (max esp-now 250 byets)
 typedef struct struct_message {
 	int indicacion; //1 = posServo, 2 = posExpulsor, 3 = pasosPap, 4 = posPap, 5 = velCinta, 6 = posCinta
 	int posServo; //Ajusta por grados el servo

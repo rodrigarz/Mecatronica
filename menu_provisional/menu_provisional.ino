@@ -1,6 +1,6 @@
 #include "Librerias.h"
 
-
+//Declaramos las variables necesarias
 String stringEstado[] = {"Automatico", "Manual"};
 String stringControl[] = {"Vel", "Pos"};
 
@@ -23,24 +23,26 @@ const int pinMarcha = 14;
 
 struct mensaje_control miMensaje;
 
-// Callback when data is sent
+// Callback al enviar, muestra si ha sido correcto o no
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
-
+//Interrupcion periodica para manadar ok a la placa control
 void IRAM_ATTR onTimer()
 {
   esp_now_send(placaControl, (uint8_t *) &miMensaje, sizeof(miMensaje));
 }
 
+//Interrupcion si se activa el paro de emergencia
 void IRAM_ATTR paroEmergencia()
 {
   miMensaje.emergencia = true;
   esp_now_send(placaControl, (uint8_t *) &miMensaje, sizeof(miMensaje));
 }
 
+//Interrupcion si se activa el marcha
 void IRAM_ATTR marcha()
 {
   miMensaje.emergencia = false;
@@ -49,20 +51,23 @@ void IRAM_ATTR marcha()
 
 void setup() {
   // put your setup code here, to run once:
+
+  //Inicializamos
   Serial.begin(115200);
- // data.posServo = 0;
   pinMode(pinParo, INPUT_PULLUP);
   pinMode(pinMarcha, INPUT_PULLUP);
   inicializacion();                  // Incialización del display
   settingsLoadFromEEprom();         // Carga valores de Eeprom
   inicializaRotaryEncoder();         //Incialización encoder rotativo HW-040 
 
+  //Vinculamos las interrupciones
   attachInterrupt(pinParo, paroEmergencia, RISING);
   attachInterrupt(pinMarcha, marcha, RISING);
 
   ESP32Encoder::useInternalWeakPullResistors=UP;
   escribeLcd(stringEstado[data.estado], stringControl[data.control]);
 
+  //Iniciamos ESP-NOW
   WiFi.mode(WIFI_STA);
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
@@ -70,8 +75,6 @@ void setup() {
   }
 
   // Init ESP-NOW
-
-
   esp_now_register_send_cb(OnDataSent);
   
   // Register peer
@@ -82,6 +85,7 @@ void setup() {
   peerInfo2.channel = 1;
   peerInfo2.encrypt = false;
 
+  //Si hay errores al hacer link con algun esclavo, lo indicamos por puerto serie
    if (esp_now_add_peer(&peerInfo) != ESP_OK){
     Serial.println("Failed to add peer servo");
     return;
@@ -92,6 +96,7 @@ void setup() {
     return;
   }
 
+  //Configuramos el temporizador para la interrupcion periodica
   timer = timerBegin(0, 80, true);
   timerAttachInterrupt(timer, &onTimer, true);
   timerAlarmWrite(timer, 2000000, true);
