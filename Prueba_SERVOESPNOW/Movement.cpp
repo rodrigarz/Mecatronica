@@ -22,7 +22,7 @@ void Motor(int speedR){
     digitalWrite(dirRB , HIGH );
     analogWrite(enR, abs(speedR));
   }
-  else{
+  else{ //PARAR
     digitalWrite(dirRA , LOW );
     digitalWrite(dirRB , LOW );
     analogWrite(enR, 0);

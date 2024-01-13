@@ -2,6 +2,7 @@
 
 ESP32Encoder myEnc;
 
+//Variables necesarias
 int test_limits = 2; // De rotary Encoder
 double Kp, Ki, Kd;
 double Input, Output;
@@ -9,8 +10,10 @@ double velMotor;
 int salida;
 double Setpoint = 0;
 
+//Creamos PID
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
+//Inicializamos la cinta
 void inicializaCinta()
 {
   ESP32Encoder::useInternalWeakPullResistors = UP;
@@ -20,6 +23,7 @@ void inicializaCinta()
 
   setupMovement();                // Incializacion Pines Motor
 
+  //Parametros iniciales del PID
   myPID.SetSampleTime(100);
   myPID.SetOutputLimits(-255, 255);
   myPID.SetMode(AUTOMATIC);
@@ -29,7 +33,7 @@ void inicializaCinta()
 }
 
 
-
+//Funcion para hacer el control en velocidad
 void controlVelocidad() {
     unsigned long int t, dt=50; // intervalo para el calculo de velocidad
     float tiempo;
@@ -63,6 +67,7 @@ void controlVelocidad() {
       Serial.println("Error:" + String(myData.setPoint - Input));
     }
 
+    //Si el setpoint ha cambiado, cambiamos el valor de salida
     if(setpoin_ant != myData.setPoint)
     {
       if (myData.setPoint > 0)
@@ -76,6 +81,7 @@ void controlVelocidad() {
       setpoin_ant = myData.setPoint;
     }
 
+    //Cada periodo de muestreo, analizamos velocidad, si varia mas de 5 unidades, vamos cambiando la salida
     if(t - t_ant2 > dt)
     {
       if((myData.setPoint - Input) > 5)
@@ -89,6 +95,7 @@ void controlVelocidad() {
     }
     salida = constrain(salida, -255, 255);
     
+    //Cada periodo de muestreo -15 escribimos la señal en el motor
     if(t-tinicio > dt-15)
     {
       Motor(salida);
@@ -96,14 +103,15 @@ void controlVelocidad() {
     }
 }
 
+//Funcion para el control de posicion
 void controlPosicion() {
   float tiempo;
   unsigned long int t, dt = 100;                // intervalo para la visualiación valores
   static unsigned long int tinicio = millis();  // Para calculo  funcion sinoidal
   static unsigned long int t_ant = millis();    // Temporizador para calculo velocidad
   static unsigned long int t_ant2 = millis();   // Temporizador para calculo Periodo
-  //static int dir=1;
 
+  //Fijamos valores para el PID, si esta en zona muerta o no
   t = millis();
   Input = myEnc.getCount();
   if (Output < 140 || Output > -140) {
@@ -118,8 +126,8 @@ void controlPosicion() {
   myPID.SetTunings(Kp, Ki, Kd);
   myPID.Compute();
 
-
-  if (t - t_ant > dt) {  // Imprime valores cada periodo de muestreo
+  //Cada periodo marcado, escribimos los datos por el puerto serie
+  if (t - t_ant > dt) {  
     Serial.print("+SetPoint:" + String(Setpoint));
     Serial.print(", ");
     Serial.print("Input:" + String(Input));
@@ -128,7 +136,7 @@ void controlPosicion() {
     t_ant = t;
   }
 
-  velMotor = Output;  //Cambiar signo si el motor gira solo en un sentido
+  velMotor = Output;  
   Motor(velMotor);
 }
   

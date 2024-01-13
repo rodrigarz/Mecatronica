@@ -1,3 +1,16 @@
+/*
+Librerias.h
+
+Autor: Grupo 5 mecatrónica
+Año: 2023/2024
+
+Descripción:
+Contiene todas las librerias empleadas en el programa
+
+*/
+
+
+
 #ifndef Librerias_h
 #define Librerias_h
 

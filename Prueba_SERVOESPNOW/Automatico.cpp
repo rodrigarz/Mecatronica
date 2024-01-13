@@ -9,6 +9,7 @@ void inicializaColores()
   tcs.begin();
 }
 
+//Función que devuelve un código numerico en funcion del color detectado
 int obtenerColor()
 {
   uint16_t clear, red, green, blue;
@@ -45,28 +46,33 @@ void plantaAutomatica()
 {
   int color = 0; //1 = rojo, 2 = azul, 3 = otro
   unsigned long int t;
+
+  //Mientras no hay pieza, paramos el motor
 	while (digitalRead(sensorIR) == 1)
 	{
 		Motor(0);
-    //vTaskDelay(1);
 	}
 
+  //Si hay pieza, leemos el color y activamos el motor
   if(digitalRead(sensorIR) == 0)
   {
     color = obtenerColor();
     Motor(140);
-   // vTaskDelay(1);
   }
   
+  //Durante 5 segundos no hacemos nada, el motor mueve la pieza hasta la mesa
 	unsigned long int tactual = millis();
   while(millis()-tactual < 5000)
   {
-   // vTaskDelay(1);
+
 	}
 
   tactual = millis();
+
+  //Paramos el motor
   Motor(0);
 
+  //La mesa gira y expulsa la pieza en funcion del código de colores
   posicionPasoPaso(color, true);
 
   delay(50);

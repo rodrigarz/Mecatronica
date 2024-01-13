@@ -1,10 +1,12 @@
 #include "esp32-hal.h"
 #include "mesa.h"
 
-//volatile int stepDelay = 0;
+
 int gradosActualMesa = 0;
 const int steps = 200*16;
 
+
+//Inicializamos todo lo necesario de la mesa
 void inicializaMesa()
 {
   pinMode(dirPin, OUTPUT);
@@ -14,6 +16,8 @@ void inicializaMesa()
   gradosActualMesa = 0;
 }
 
+
+//Función para mover el paso a paso por grados, limitando el maximo para evitar que el cable del servo se enrede
 void pasosPasoPaso()
 {
     if (gradosActualMesa + myData.gradosPaP > 300 || gradosActualMesa + myData.gradosPaP < -300)
@@ -35,16 +39,16 @@ void pasosPasoPaso()
     } 
 }
 
+
+//Funcion para mover por posiciones la mesa, el parametro modoAuto indica si hay que activar el expulsor o no
 void posicionPasoPaso(int posicion, bool modoAuto)
 {
     if (posicion == 1) {
-        Serial.println("Hola");
         if (gradosActualMesa + (steps / 4)/8.89 > 300)
         {
             Serial.println("No se puede mover la mesa mas distancia");
             return;
         }
-        Serial.println("Antes de mover");
         mueveMotor(steps / 4);
         if (modoAuto)
         {
@@ -92,12 +96,11 @@ void posicionPasoPaso(int posicion, bool modoAuto)
 }
 
 
+//Funcion para mover la mesa en una direccion (horario)
 void mueveMotor(int stepsToMove) {
-    Serial.println("En mueve");
     digitalWrite(dirPin, HIGH); //Definimos sentido
-    static int stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));///definidmos velocidad
+    static int stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));//Calculamos el delay con la velocidad
 
-    Serial.println("Antes de for");
     Serial.println(stepDelay);
     for (int x = 0; x < stepsToMove; x++) {
         digitalWrite(stepPin, HIGH);
@@ -107,9 +110,10 @@ void mueveMotor(int stepsToMove) {
     }
 }
 
+//Funcion para mover la mesa en la direccion contraria (antihorario)
 void mueveMotorB(int stepsToMove) {
-    digitalWrite(dirPin, LOW);
-    static int stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap));
+    digitalWrite(dirPin, LOW); //Definimos sentido
+    static int stepDelay = round((0.1125 * 1000000) / (2 * myData.velPap)); //Calculamos el delay con la velocidad
 
     for (int x = 0; x < stepsToMove; x++) {
         digitalWrite(stepPin, HIGH);
@@ -119,6 +123,8 @@ void mueveMotorB(int stepsToMove) {
     }
 }
 
+
+//Buscamos la posicion inicial con la ayuda del final de carrera
 void buscaInicio()
 {
   while(digitalRead(pinFinalCarrera) == LOW)

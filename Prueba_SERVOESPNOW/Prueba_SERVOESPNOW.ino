@@ -9,16 +9,17 @@ void setup() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println(String(entraMovimiento));
+  
+  //Entrar a modo manual o automatico
   if(entraMovimiento)
   {
     movimiento();
     delay(50);
     entraMovimiento = false;
+    
   } else if (entraAutomatico)
   {
     plantaAutomatica();
     delay(50);
-    entraAutomatico = false;
   }
 }

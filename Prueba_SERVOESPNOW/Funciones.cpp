@@ -6,6 +6,8 @@ struct struct_message myData = {};
 bool entraMovimiento = false;
 bool entraAutomatico = false;
 
+
+//En función de la instrucción hacemos un movimiento u otro
 void movimiento()
 {
     switch (myData.indicacion)
@@ -13,36 +15,29 @@ void movimiento()
     case 1:
         posicionServo();
         myData.indicacion = 0;
-        //myData = {};
         break;
 
     case 2:
         posicionExpulsor(myData.posExpulsor);
         myData.indicacion = 0;
-        //myData = {};
         break;
 
     case 3:
         pasosPasoPaso();
         myData.indicacion = 0;
-       // myData = {};
         break;
 
     case 4:
-        Serial.println("Aqui1");
         posicionPasoPaso(myData.posPap, false);
-        Serial.println("Salgo");
         myData.indicacion = 0;
-        //myData = {};
         break;
 
     case 5:
         do{
           controlVelocidad();
-          vTaskDelay(1);
+          vTaskDelay(1); //Para evitar que se reinicie el esp
         }while(myData.indicacion == 5);
         myData.indicacion = 0;
-       // myData = {};
         break;
 
     case 6: 
@@ -51,19 +46,17 @@ void movimiento()
           vTaskDelay(1);
         }while(myData.indicacion == 6);
         myData.indicacion = 0;
-       // myData = {};
         break;
 
     default:
         Motor(0);
-        //myData = {};
         break;
     }
     delay(50);
 }
 
 
-
+//Inicializamos todo lo necesario para funcionar
 void inicializa()
 {
     Serial.begin(115200);
@@ -95,7 +88,7 @@ void inicializa()
     buscaInicio();
 }
 
-
+//Callback cuando recibimos comunicacion por ESP-NOW
 void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
     memcpy(&myData, incomingData, sizeof(myData));
     Serial.print("Bytes received: ");
