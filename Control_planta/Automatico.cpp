@@ -57,7 +57,7 @@ void plantaAutomatica()
   if(digitalRead(sensorIR) == 0)
   {
     color = obtenerColor();
-    Motor(140);
+    Motor(180);
   }
   
   //Durante 5 segundos no hacemos nada, el motor mueve la pieza hasta la mesa
